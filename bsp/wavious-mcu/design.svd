@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<device schemaVersion="1.3" xmlns:xs="http://www.w3.org/2001/XMLSchema-instance" xs:noNamespaceSchemaLocation="CMSIS-SVD.xsd">
+  <name>ibex32</name>
+  <version>0.1</version>
+  <description>From ibex32,model device generator</description>
+  <addressUnitBits>8</addressUnitBits>
+  <width>32</width>
+  <size>32</size>
+  <access>read-write</access>
+  <peripherals>
+    <peripheral>
+      <name>riscv_clint0_0</name>
+      <description>From riscv,clint0,control peripheral generator</description>
+      <baseAddress>0x8000</baseAddress>
+      <addressBlock>
+        <offset>0</offset>
+        <size>0x8000</size>
+        <usage>registers</usage>
+      </addressBlock>
+      <registers>
+        <register>
+          <name>msip_0</name>
+          <description>MSIP Register for hart 0</description>
+          <addressOffset>0x0</addressOffset>
+        </register>
+        <register>
+          <name>mtimecmp_0</name>
+          <description>MTIMECMP Register for hart 0</description>
+          <addressOffset>0x4000</addressOffset>
+          <size>64</size>
+        </register>
+        <register>
+          <name>mtime</name>
+          <description>MTIME Register</description>
+          <addressOffset>0xBFF8</addressOffset>
+          <size>64</size>
+        </register>
+      </registers>
+    </peripheral>
+  </peripherals>
+</device>

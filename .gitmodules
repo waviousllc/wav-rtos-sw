@@ -1,0 +1,9 @@
+[submodule "FreeRTOS-Kernel"]
+	path = FreeRTOS-Kernel
+	url = git@github.com:FreeRTOS/FreeRTOS-Kernel.git
+[submodule "freedom-metal"]
+	path = freedom-metal
+	url = git@github.com:sifive/freedom-metal.git
+[submodule "wav-build"]
+	path = wav-build
+	url = git@github.com:waviousllc/wav-build.git

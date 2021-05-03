@@ -1,0 +1,57 @@
+/dts-v1/;
+/ {
+    #address-cells = <1>;
+    #size-cells = <1>;
+    compatible = "ibex";
+    model = "ibex32";
+    L11: cpus {
+        #address-cells = <1>;
+        #size-cells = <0>;
+        L3: cpu@0 {
+            clock-frequency = <384000000>;
+            compatible = "riscv";
+            device_type = "cpu";
+            reg = <0x0>;
+            riscv,isa = "rv32imc";
+            riscv,pmpregions = <8>;
+            status = "okay";
+            timebase-frequency = <1000000>;
+            sifive,dtim = <&L5>;
+            sifive,itim = <&L7>;
+                    L2: interrupt-controller {
+                #interrupt-cells = <1>;
+                compatible = "riscv,cpu-intc";
+                interrupt-controller;
+            };
+        };
+    };
+
+    L10: soc {
+        #address-cells = <1>;
+        #size-cells = <1>;
+        compatible = "simple-bus";
+
+        clint: clint@8000 {
+            compatible = "riscv,clint0";
+            interrupts-extended = <&L2 3 &L2 7>;
+            reg = <0x8000 0x8000>;
+            reg-names = "control";
+        };
+            L5: dtim@50000 {
+            compatible = "sifive,dtim0";
+            reg = <0x00050000 0x10000>;
+            reg-names = "mem";
+        };
+            L7: itim@10000 {
+            compatible = "sifive,itim0";
+            reg = <0x00010000 0x10000>;
+            reg-names = "mem";
+            };
+        L8: refclk {
+            #clock-cells = <0>;
+            clock-frequency = <38400000>;
+            clock-output-names = "refclk";
+            compatible = "fixed-clock";
+        };
+    };
+};

@@ -1,0 +1,21 @@
+# Setup Toplevel directory
+set(WAV_RTOS_TOP_LEVEL "${CMAKE_CURRENT_LIST_DIR}")
+
+include(${WAV_RTOS_TOP_LEVEL}/wav-build/cmake/CMake.in)
+
+# If heap allocation scheme not defined, set to default
+if(NOT DEFINED RTOS_HEAP_ALLOC_SCHEME)
+    set(RTOS_HEAP_ALLOC_SCHEME "4")
+    message(STATUS "Heap Allocation Scheme Not Specified, Using Default: 4")
+else()
+    message(STATUS "Detected Heap Allocation Scheme: ${RTOS_HEAP_ALLOC_SCHEME}")
+endif(NOT DEFINED RTOS_HEAP_ALLOC_SCHEME)
+
+# Kernel REQUIRED settings
+if(CONFIG_TARGET_ARCH MATCHES "riscv64")
+    add_compile_options(-march=rv64imac -mabi=lp64 -mcmodel=medany --specs=nano.specs -nostartfiles -nostdlib)
+    add_link_options(-Wl,-gc-sections -march=rv64imac -mabi=lp64 -mcmodel=medany --specs=nano.specs -nostartfiles -nostdlib)
+elseif(CONFIG_TARGET_ARCH MATCHES "riscv32")
+    add_compile_options(-march=rv32imc -mabi=ilp32 --specs=nano.specs -nostartfiles -nostdlib)
+    add_link_options(-Wl,--gc-sections -march=rv32imc -mabi=ilp32 --specs=nano.specs -nostartfiles -nostdlib)
+endif(CONFIG_TARGET_ARCH MATCHES "riscv64")
