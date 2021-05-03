@@ -1,0 +1,19 @@
+This directory should contain all toplevel applications that
+are created. Each of these applications should define their
+own main function which will be called at initialization.
+
+When adding a new application, CMakeLists.txt file should be
+updated with a new entry pointing to the new subdirectory.
+An example is already provided for the sample application.
+
+All applications must define the following c function:
+
+int main(void)
+
+The intialization code will invoke main and this is the
+main entry point to the application. Most applications
+will run in a FreeRTOS envrionment and will simply
+use freertos-sample as an example to build from. If you
+know what you're doing you can build an image without
+FreeRTOS support. Appropriate linker files are found
+in bsp/ directory.
