@@ -41,7 +41,7 @@ print_help() {
 echo "Usage: configure [OPTIONS]\n"
 echo "This program configures CMAKE for given architecture\n"
 echo "Options:"
-echo "--board <wavious-mcu>"
+echo "--board <wavious-mcu | wavious-wh440>"
 echo "-t, --build_type <Debug | Release>"
 }
 
@@ -82,5 +82,9 @@ case "$CONFIG_TARGET_BOARD" in
     wavious-mcu)
       init_build_common
       init_riscv32
+      ;;
+    wavious-wh440)
+      init_build_common
+      init_riscv64
       ;;
 esac
