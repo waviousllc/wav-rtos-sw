@@ -137,10 +137,11 @@ bool messenger_send_reg_if(void *dev, void *buff, size_t len)
     reg_write(messenger->address + MSGINTF_TX_ID__ADR, msg->id);
     reg_write(messenger->address + MSGINTF_TX_DATA__ADR, msg->data);
 
+    // Enable ACK IRQ
+    enable_irq(messenger->irq.ack);
+
     // Send Request
     reg_write(messenger->address + MSGINTF_TX_REQ__ADR, 0x1);
-
-    enable_irq(messenger->irq.ack);
 
     // Wait for ack
     vWaitForCompletion(&messenger->send_complete);

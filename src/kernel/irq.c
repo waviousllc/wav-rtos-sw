@@ -12,6 +12,7 @@
 #include <kernel/irq.h>
 
 /* Metal includes. */
+#include <metal/machine/platform.h>
 #include <metal/cpu.h>
 
 /** @brief Interrupt Controller ID */
