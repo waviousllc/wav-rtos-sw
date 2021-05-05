@@ -12,7 +12,9 @@ if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
     set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -DDEBUG")
 endif()
 
-include(${CMAKE_CURRENT_LIST_DIR}/bsp/${CONFIG_TARGET_BOARD}/CMakeLists.txt)
+set(WAV_RTOS_TOP_LEVEL "${CMAKE_CURRENT_LIST_DIR}")
+
+include(${WAV_RTOS_TOP_LEVEL}/bsp/${CONFIG_TARGET_BOARD}/CMakeLists.txt)
 
 # Setup Build environment based on selected architecture
 add_compile_options(
@@ -41,15 +43,15 @@ endif(CONFIG_TARGET_ARCH MATCHES "riscv64")
 FILE(
     GLOB_RECURSE
     METAL_SRC
-    ${CMAKE_CURRENT_LIST_DIR}/freedom-metal/src/*.c
-    ${CMAKE_CURRENT_LIST_DIR}/freedom-metal/src/*.S
+    ${WAV_RTOS_TOP_LEVEL}/freedom-metal/src/*.c
+    ${WAV_RTOS_TOP_LEVEL}/freedom-metal/src/*.S
 )
 
 FILE(
     GLOB_RECURSE
     GLOSS_SRC
-    ${CMAKE_CURRENT_LIST_DIR}/freedom-metal/gloss/*.c
-    ${CMAKE_CURRENT_LIST_DIR}/freedom-metal/gloss/*.S
+    ${WAV_RTOS_TOP_LEVEL}/freedom-metal/gloss/*.c
+    ${WAV_RTOS_TOP_LEVEL}/freedom-metal/gloss/*.S
 )
 
 set(
@@ -62,8 +64,8 @@ add_library(metal STATIC ${METAL_LIB_SRC})
 target_include_directories(
     metal
     PUBLIC
-    ${CMAKE_CURRENT_LIST_DIR}/freedom-metal/
-    ${CMAKE_CURRENT_LIST_DIR}/bsp/${CONFIG_TARGET_BOARD}/
+    ${WAV_RTOS_TOP_LEVEL}/freedom-metal/
+    ${WAV_RTOS_TOP_LEVEL}/bsp/${CONFIG_TARGET_BOARD}/
 )
 
 target_compile_options(
@@ -75,15 +77,23 @@ target_compile_options(
 #-------------------------------#
 #     FreeRTOS Library          #
 #-------------------------------#
+# If heap allocation scheme not defined, set to default
+if(NOT DEFINED RTOS_HEAP_ALLOC_SCHEME)
+    set(RTOS_HEAP_ALLOC_SCHEME "4")
+    message(STATUS "Heap Allocation Scheme Not Specified, Using Default: 4")
+else()
+    message(STATUS "Detected Heap Allocation Scheme: ${RTOS_HEAP_ALLOC_SCHEME}")
+endif(NOT DEFINED RTOS_HEAP_ALLOC_SCHEME)
+
 # Create FreeRTOS Library
 FILE(
     GLOB
     FREERTOS_SRC
-    ${CMAKE_CURRENT_LIST_DIR}/FreeRTOS-Kernel/*.c
-    ${CMAKE_CURRENT_LIST_DIR}/FreeRTOS-Kernel/portable/GCC/RISC-V/*.c
-    ${CMAKE_CURRENT_LIST_DIR}/FreeRTOS-Kernel/portable/GCC/RISC-V/*.S
-    ${CMAKE_CURRENT_LIST_DIR}/FreeRTOS-Kernel/portable/MemMang/heap_4.c
-    ${CMAKE_CURRENT_LIST_DIR}/bsp/${CONFIG_TARGET_BOARD}/freertos/Bridge_Freedom-metal_FreeRTOS.c
+    ${WAV_RTOS_TOP_LEVEL}/FreeRTOS-Kernel/*.c
+    ${WAV_RTOS_TOP_LEVEL}/FreeRTOS-Kernel/portable/GCC/RISC-V/*.c
+    ${WAV_RTOS_TOP_LEVEL}/FreeRTOS-Kernel/portable/GCC/RISC-V/*.S
+    ${WAV_RTOS_TOP_LEVEL}/FreeRTOS-Kernel/portable/MemMang/heap_${RTOS_HEAP_ALLOC_SCHEME}.c
+    ${WAV_RTOS_TOP_LEVEL}/bsp/${CONFIG_TARGET_BOARD}/freertos/Bridge_Freedom-metal_FreeRTOS.c
 )
 
 add_library(
@@ -95,9 +105,9 @@ add_library(
 target_include_directories(
     freertos
     PUBLIC
-    ${CMAKE_CURRENT_LIST_DIR}/FreeRTOS-Kernel/include
-    ${CMAKE_CURRENT_LIST_DIR}/FreeRTOS-Kernel/portable/GCC/RISC-V/
-    ${CMAKE_CURRENT_LIST_DIR}/bsp/${CONFIG_TARGET_BOARD}/freertos
+    ${WAV_RTOS_TOP_LEVEL}/FreeRTOS-Kernel/include
+    ${WAV_RTOS_TOP_LEVEL}/FreeRTOS-Kernel/portable/GCC/RISC-V/
+    ${WAV_RTOS_TOP_LEVEL}/bsp/${CONFIG_TARGET_BOARD}/freertos
 )
 
 target_compile_options(
@@ -111,7 +121,6 @@ target_link_libraries(freertos metal bsp_freertos)
 #-------------------------------#
 #      Everything else          #
 #-------------------------------#
-set(WAV_RTOS_TOP_LEVEL "${CMAKE_CURRENT_LIST_DIR}")
 
-add_subdirectory("${CMAKE_SOURCE_DIR}/src")
-add_subdirectory("${CMAKE_SOURCE_DIR}/app")
+add_subdirectory("${WAV_RTOS_TOP_LEVEL}/src")
+add_subdirectory("${WAV_RTOS_TOP_LEVEL}/app")
