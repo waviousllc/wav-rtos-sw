@@ -13,7 +13,7 @@ add_library(
 target_sources(
     bsp_freertos
     INTERFACE
-    ${CMAKE_SOURCE_DIR}/bsp/${CONFIG_TARGET_BOARD}/freertos/vector.S
+    ${WAV_RTOS_TOP_LEVEL}/bsp/${CONFIG_TARGET_BOARD}/freertos/vector.S
 )
 
 target_compile_options(

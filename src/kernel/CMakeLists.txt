@@ -12,7 +12,7 @@ add_library(
 target_include_directories(
     kernel
     PUBLIC
-    ${CMAKE_SOURCE_DIR}/include
+    ${WAV_RTOS_TOP_LEVEL}/include
 )
 
 target_compile_definitions(kernel
