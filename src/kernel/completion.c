@@ -17,13 +17,11 @@
 #include <FreeRTOS.h>
 #include <task.h>
 #include <kernel/completion.h>
-#include <metal/lock.h>
 
 void vInitCompletion(Completion_t *pxCompletion)
 {
     pxCompletion->xHandle = NULL;
     pxCompletion->ucDone = 0;
-    metal_lock_init(&pxCompletion->lock);
 }
 
 void vReInitCompletion(Completion_t *pxCompletion)
@@ -33,41 +31,53 @@ void vReInitCompletion(Completion_t *pxCompletion)
 
 void vComplete(Completion_t *pxCompletion)
 {
-    metal_lock_take(&pxCompletion->lock);
-    pxCompletion->ucDone++;
-    // Notify task that is waiting
-    if (pxCompletion->xHandle)
+    TaskHandle_t xHandle;
+    taskENTER_CRITICAL();
     {
-        xTaskNotifyGive(pxCompletion->xHandle);
+        pxCompletion->ucDone++;
+        xHandle = pxCompletion->xHandle;
     }
-    metal_lock_give(&pxCompletion->lock);
+    taskEXIT_CRITICAL();
+
+    // Notify task that is waiting
+    if (xHandle)
+    {
+        xTaskNotifyGive(xHandle);
+    }
 }
 
 void vCompleteFromISR(Completion_t *pxCompletion, BaseType_t *pxHigherPriorityTaskWoken)
 {
-    metal_lock_take(&pxCompletion->lock);
-    pxCompletion->ucDone++;
-    // Notify task that is waiting
-    if (pxCompletion->xHandle)
+    BaseType_t xFlags;
+    TaskHandle_t xHandle;
+    xFlags = taskENTER_CRITICAL_FROM_ISR();
     {
-        vTaskNotifyGiveFromISR(pxCompletion->xHandle, pxHigherPriorityTaskWoken);
+        pxCompletion->ucDone++;
+        xHandle = pxCompletion->xHandle;
     }
-    metal_lock_give(&pxCompletion->lock);
+    taskEXIT_CRITICAL_FROM_ISR(xFlags);
+
+    // Notify task that is waiting
+    if (xHandle)
+    {
+        vTaskNotifyGiveFromISR(xHandle, pxHigherPriorityTaskWoken);
+    }
 }
 
 BaseType_t xWaitForCompletionTimeout(Completion_t *pxCompletion, TickType_t xBlockTime)
 {
     BaseType_t xReturn = pdTRUE;
 
-    metal_lock_take(&pxCompletion->lock);
+    taskENTER_CRITICAL();
     if (!pxCompletion->ucDone)
     {
-        metal_lock_give(&pxCompletion->lock);
+        pxCompletion->xHandle = xTaskGetCurrentTaskHandle();
+        taskEXIT_CRITICAL();
         xReturn = ulTaskNotifyTake(pdTRUE, xBlockTime);
-        metal_lock_take(&pxCompletion->lock);
+        taskENTER_CRITICAL();
     }
     pxCompletion->ucDone = 0;
-    metal_lock_give(&pxCompletion->lock);
+    taskEXIT_CRITICAL();
     return xReturn;
 }
 
