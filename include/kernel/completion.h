@@ -19,7 +19,6 @@
 
 #include <FreeRTOS.h>
 #include <task.h>
-#include <metal/lock.h>
 
 /**
  * @brief   Completion Structure
@@ -36,7 +35,6 @@ typedef struct completion
 {
     uint8_t         ucDone;
     TaskHandle_t    xHandle;
-    struct metal_lock lock;
 } Completion_t;
 
 /**
