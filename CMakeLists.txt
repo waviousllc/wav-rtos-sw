@@ -10,31 +10,23 @@ if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
     # Make sure everything is built for correct architecture
     set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS}")
     set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -DDEBUG")
+    include(${CMAKE_CURRENT_LIST_DIR}/CMake.in)
+
+    # Setup default compile options 
+    add_compile_options(
+        -O1
+        -g
+        -Wall
+        -Wextra
+        -Werror
+        -Wno-unused-parameter
+        -fdata-sections
+        -ffunction-sections
+        -std=c11
+    )
 endif()
 
-set(WAV_RTOS_TOP_LEVEL "${CMAKE_CURRENT_LIST_DIR}")
-
 include(${WAV_RTOS_TOP_LEVEL}/bsp/${CONFIG_TARGET_BOARD}/CMakeLists.txt)
-
-# Setup Build environment based on selected architecture
-add_compile_options(
-    -g
-    -O1
-    -Wall
-    -Wextra
-    -Werror
-    -Wno-unused-parameter
-    -fdata-sections
-    -ffunction-sections
-    -std=c11
-)
-if(CONFIG_TARGET_ARCH MATCHES "riscv64")
-    add_compile_options(-march=rv64imac -mabi=lp64 -mcmodel=medany --specs=nano.specs -nostartfiles -nostdlib)
-    add_link_options(-Wl,-gc-sections -march=rv64imac -mabi=lp64 -mcmodel=medany --specs=nano.specs -nostartfiles -nostdlib)
-elseif(CONFIG_TARGET_ARCH MATCHES "riscv32")
-    add_compile_options(-march=rv32imc -mabi=ilp32 --specs=nano.specs -nostartfiles -nostdlib)
-    add_link_options(-Wl,--gc-sections -march=rv32imc -mabi=ilp32 --specs=nano.specs -nostartfiles -nostdlib)
-endif(CONFIG_TARGET_ARCH MATCHES "riscv64")
 
 #-------------------------------#
 #         METAL Library         #
@@ -77,14 +69,6 @@ target_compile_options(
 #-------------------------------#
 #     FreeRTOS Library          #
 #-------------------------------#
-# If heap allocation scheme not defined, set to default
-if(NOT DEFINED RTOS_HEAP_ALLOC_SCHEME)
-    set(RTOS_HEAP_ALLOC_SCHEME "4")
-    message(STATUS "Heap Allocation Scheme Not Specified, Using Default: 4")
-else()
-    message(STATUS "Detected Heap Allocation Scheme: ${RTOS_HEAP_ALLOC_SCHEME}")
-endif(NOT DEFINED RTOS_HEAP_ALLOC_SCHEME)
-
 # Create FreeRTOS Library
 FILE(
     GLOB
