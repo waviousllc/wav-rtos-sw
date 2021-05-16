@@ -115,7 +115,7 @@ __attribute__((constructor)) static void FreeRTOS_init(void)
 
     // Set mtvec to custom interrupt vector
     __asm__ __volatile__ (
-        "la t0, freertos_risc_v_trap_handler_vector\n"
+        "la t0, __metal_vector_table\n"
         "csrw mtvec, t0"
     );
 }
