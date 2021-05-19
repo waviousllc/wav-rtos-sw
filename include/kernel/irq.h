@@ -1,7 +1,15 @@
+/**
+ * Copyright (c) 2021 Wavious LLC.
+ *
+ * SPDX-License-Identifier: GPL-3.0
+ */
 #ifndef _KERNEL_IRQ_H_
 #define _KERNEL_IRQ_H_
 
+/* Standard includes. */
 #include <stdint.h>
+
+/* Metal includes. */
 #include <metal/interrupt.h>
 
 /** @brief  Halt CPU until interrupt fires */
