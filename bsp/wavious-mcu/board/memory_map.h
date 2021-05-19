@@ -1,3 +1,8 @@
+/**
+ * Copyright (c) 2021 Wavious LLC.
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
 #ifndef _MEMORY_MAP_H_
 #define _MEMORY_MAP_H_
 

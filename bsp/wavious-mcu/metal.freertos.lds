@@ -1,5 +1,6 @@
 /* Copyright (c) 2020 SiFive Inc. */
 /* SPDX-License-Identifier: Apache-2.0 */
+/* Modified by waviousllc */
 OUTPUT_ARCH("riscv")
 
 /* Privileged mode Linker Script

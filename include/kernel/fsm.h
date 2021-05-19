@@ -1,8 +1,16 @@
+/**
+ * Copyright (c) 2021 Wavious LLC.
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
 #ifndef _KERNEL_FSM_H_
 #define _KERNEL_FSM_H_
 
+/* Standard includes. */
 #include <stdint.h>
 #include <stdbool.h>
+
+/* FreeRTOS includes. */
 #include <FreeRTOS.h>
 
 // Forward Declaration
