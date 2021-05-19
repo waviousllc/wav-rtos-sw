@@ -1,6 +1,12 @@
+/**
+ * Copyright (c) 2021 Wavious LLC.
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
 #ifndef _KERNEL_LIST_H_
 #define _KERNEL_LIST_H_
 
+/* FreeRTOS includes. */
 #include <FreeRTOS.h>
 #include <list.h>
 

@@ -1,21 +1,14 @@
-/****************************************************************************
-*****************************************************************************
-** Wavious LLC Proprietary
-**
-** Copyright (c) 2021 Wavious LLC. All rights reserved.
-**
-** All data and information contained in or disclosed by this document
-** are confidential and proprietary information of Wavious LLC,
-** and all rights therein are expressly reserved. By accepting this
-** material, the recipient agrees that this material and the information
-** contained therein are held in confidence and in trust and will not be
-** used, copied, reproduced in whole or in part, nor its contents
-** revealed in any manner to others without the express written
-** permission of Wavious LLC.
-*****************************************************************************
-****************************************************************************/
+/**
+ * Copyright (c) 2021 Wavious LLC.
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/* FreeRTOS includes. */
 #include <FreeRTOS.h>
 #include <task.h>
+
+/* Kernel includes. */
 #include <kernel/completion.h>
 
 void vInitCompletion(Completion_t *pxCompletion)

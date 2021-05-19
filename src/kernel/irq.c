@@ -1,7 +1,17 @@
+/**
+ * Copyright (c) 2021 Wavious LLC.
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/* Standard includes. */
 #include <stdbool.h>
 #include <stddef.h>
+
+/* Kernel includes. */
 #include <kernel/irq.h>
 
+/* Metal includes. */
 #include <metal/cpu.h>
 
 /** @brief Interrupt Controller ID */
