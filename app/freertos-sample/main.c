@@ -1,3 +1,8 @@
+/**
+ * Copyright (c) 2021 Wavious LLC.
+ *
+ * SPDX-License-Identifier: GPL-3.0
+ */
 /* Standard includes. */
 #include <stdio.h>
 #include <string.h>
