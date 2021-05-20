@@ -4,6 +4,7 @@ set(KERNEL_SRC
     ${CMAKE_CURRENT_LIST_DIR}/list.c
     ${CMAKE_CURRENT_LIST_DIR}/fsm.c
     ${CMAKE_CURRENT_LIST_DIR}/notification.c
+    ${CMAKE_CURRENT_LIST_DIR}/messenger.c
 )
 
 add_library(
