@@ -12,7 +12,7 @@ if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
     set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -DDEBUG")
     include(${CMAKE_CURRENT_LIST_DIR}/CMake.in)
 
-    # Setup default compile options 
+    # Setup default compile options
     add_compile_options(
         -O1
         -g

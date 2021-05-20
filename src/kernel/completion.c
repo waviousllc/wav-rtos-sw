@@ -69,7 +69,7 @@ BaseType_t xWaitForCompletionTimeout(Completion_t *pxCompletion, TickType_t xBlo
         xReturn = ulTaskNotifyTake(pdTRUE, xBlockTime);
         taskENTER_CRITICAL();
     }
-    pxCompletion->ucDone = 0;
+    pxCompletion->ucDone--;
     taskEXIT_CRITICAL();
     return xReturn;
 }
