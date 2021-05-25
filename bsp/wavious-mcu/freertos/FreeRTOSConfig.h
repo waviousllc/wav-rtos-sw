@@ -84,7 +84,7 @@
  */
 #define configAPPLICATION_ALLOCATED_HEAP    1
 
-#define configTOTAL_HEAP_SIZE               ( ( size_t ) 2048 * sizeof( size_t ) )
+#define configTOTAL_HEAP_SIZE               ( ( size_t ) 4096 * sizeof( size_t ) )
 
 #define configMAX_TASK_NAME_LEN             ( 16 )
 #define configUSE_TRACE_FACILITY            1
