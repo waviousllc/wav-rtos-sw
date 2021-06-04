@@ -3,8 +3,8 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-#ifndef _MESSENGER_REG_IF_H_
-#define _MESSENGER_REG_IF_H_
+#ifndef _MESSENGER_DRIVER_H_
+#define _MESSENGER_DRIVER_H_
 
 /* Standard includes. */
 #include <stddef.h>
@@ -105,4 +105,4 @@ bool messenger_receive_reg_if(void *dev, void *buff, size_t len);
  */
 bool messenger_validate_reg_if(void *dev, void *buff, size_t len);
 
-#endif /* _MESSENGER_REG_IF_H_ */
+#endif /* _MESSENGER_DRIVER_H_ */

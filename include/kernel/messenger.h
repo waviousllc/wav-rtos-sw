@@ -155,6 +155,6 @@ BaseType_t xSendMessage(UBaseType_t uAddress, Message_t *pxMessage);
  * @retval      pdTRUE if received.
  * @retval      pdFALSE if no matching interface.
  */
-BaseType_t vReceiveMessage(UBaseType_t uAddress, Message_t *pxMessage);
+BaseType_t xReceiveMessage(UBaseType_t uAddress, Message_t *pxMessage);
 
 #endif /* _KERNEL_MESSENGER_H_ */
