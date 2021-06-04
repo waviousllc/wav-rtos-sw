@@ -218,7 +218,7 @@ BaseType_t xSendMessage(UBaseType_t uAddress, Message_t *pxMessage)
 }
 
 
-BaseType_t vReceiveMessage(UBaseType_t uAddress, Message_t *pxMessage)
+BaseType_t xReceiveMessage(UBaseType_t uAddress, Message_t *pxMessage)
 {
     MessageInterface_t *pxInterface = pxLookupPhyInterface(uAddress);
     struct MessageDescriptor_t *pxDescriptor;
