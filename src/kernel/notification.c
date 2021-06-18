@@ -18,11 +18,8 @@
 /*******************************************************************************
 **                                   MACROS
 *******************************************************************************/
-#ifndef CONFIG_NOTIFICATION_QUEUE_LENGTH
-    #define CONFIG_NOTIFICATION_QUEUE_LENGTH    (8)
-#endif /* CONFIG_NOTIFICATION_QUEUE_LENGTH */
 #ifndef CONFIG_NOTIFICATION_TASK_PRIORITY
-    #define CONFIG_NOTIFICATION_TASK_PRIORITY   (configMAX_PRIORITIES - 2)
+    #define CONFIG_NOTIFICATION_TASK_PRIORITY   (configMAX_PRIORITIES - 1)
 #endif /* CONFIG_NOTIFICATION_TASK_PRIORITY */
 
 #define CONFIG_NOTIFICATION_STACK_SIZE_WORDS    (configMINIMAL_STACK_SIZE)
@@ -31,7 +28,6 @@
 **                           VARIABLE DECLARATIONS
 *******************************************************************************/
 static TaskHandle_t xNotificationTaskHandle = NULL;
-static QueueHandle_t xQueue = NULL;
 static List_t xEndpointList;
 
 /*******************************************************************************
@@ -54,19 +50,10 @@ static void prvNotificationTask(void *pvParameters);
 *******************************************************************************/
 BaseType_t xNotificationTaskInit(void)
 {
-    configASSERT(xQueue == NULL);
     configASSERT(xNotificationTaskHandle == NULL);
 
     // Can only call once
-    if (xQueue != NULL || xNotificationTaskHandle != NULL)
-    {
-        return pdFALSE;
-    }
-
-    // Create Queue
-    xQueue = xQueueCreate(CONFIG_NOTIFICATION_QUEUE_LENGTH, sizeof(Notification_t));
-    configASSERT(xQueue != NULL);
-    if (xQueue == NULL)
+    if (xNotificationTaskHandle != NULL)
     {
         return pdFALSE;
     }
@@ -110,12 +97,12 @@ void vRegisterNotificationEndpoint(NotificationEndpoint_t *pxEndpoint)
 
 void vSendNotification(Notification_t xNotification)
 {
-    if (xQueue == NULL)
+    if (xNotificationTaskHandle == NULL)
     {
         return;
     }
 
-    xQueueSendToBack(xQueue, &xNotification, portMAX_DELAY);
+    xTaskNotify(xNotificationTaskHandle, xNotification, eSetValueWithOverwrite);
 }
 
 static void prvNotificationTask(void *pvParameters)
@@ -127,7 +114,7 @@ static void prvNotificationTask(void *pvParameters)
     for(;;)
     {
         // Block indefinitely
-        xQueueReceive(xQueue, &xNotification, portMAX_DELAY);
+        xTaskNotifyWait(0, 0, &xNotification, portMAX_DELAY);
 
         listFOR_EACH_LIST_ITEM(pxItem, &xEndpointList)
         {
