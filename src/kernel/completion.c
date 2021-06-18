@@ -41,35 +41,37 @@ void vComplete(Completion_t *pxCompletion)
 
 void vCompleteFromISR(Completion_t *pxCompletion, BaseType_t *pxHigherPriorityTaskWoken)
 {
-    BaseType_t xFlags;
-    TaskHandle_t xHandle;
-    xFlags = taskENTER_CRITICAL_FROM_ISR();
-    {
-        pxCompletion->ucDone++;
-        xHandle = pxCompletion->xHandle;
-    }
-    taskEXIT_CRITICAL_FROM_ISR(xFlags);
+    pxCompletion->ucDone++;
 
     // Notify task that is waiting
-    if (xHandle)
+    if (pxCompletion->xHandle)
     {
-        vTaskNotifyGiveFromISR(xHandle, pxHigherPriorityTaskWoken);
+        vTaskNotifyGiveFromISR(pxCompletion->xHandle, pxHigherPriorityTaskWoken);
     }
 }
 
 BaseType_t xWaitForCompletionTimeout(Completion_t *pxCompletion, TickType_t xBlockTime)
 {
     BaseType_t xReturn = pdTRUE;
-
     taskENTER_CRITICAL();
-    if (!pxCompletion->ucDone)
     {
-        pxCompletion->xHandle = xTaskGetCurrentTaskHandle();
-        taskEXIT_CRITICAL();
-        xReturn = ulTaskNotifyTake(pdTRUE, xBlockTime);
-        taskENTER_CRITICAL();
+        if (!pxCompletion->ucDone)
+        {
+            // Clear previous notification
+            ulTaskNotifyTake(pdTRUE, 0);
+            pxCompletion->xHandle = xTaskGetCurrentTaskHandle();
+
+            // Can't block while in critical
+            taskEXIT_CRITICAL();
+
+            // Block
+            xReturn = ulTaskNotifyTake(pdTRUE, xBlockTime);
+
+            // Go back to critical since expected to be here
+            taskENTER_CRITICAL();
+        }
+        pxCompletion->ucDone--;
     }
-    pxCompletion->ucDone--;
     taskEXIT_CRITICAL();
     return xReturn;
 }
