@@ -17,7 +17,7 @@
  *
  * @details Represents a specific notification value.
  */
-typedef BaseType_t Notification_t;
+typedef UBaseType_t Notification_t;
 
 /** @brief  Notification Handler */
 typedef void (*NotificationHandler_t)(Notification_t notification, void *args);

@@ -14,12 +14,14 @@
  * @brief   Completion Structure
  *
  * @details Completion structure that can be used to synchronize a task with the
- *          completion of an event. NOTE: Only one task can be sychronized at a
- *          given time.
+ *          completion of an event.
  *
- * @ucDone      done flag to indicate that event occurred.
- * @xTaskHandle pointer to the current task that is waiting on the completion.
- * @lock        spinlock for locking completion state.
+ * @note    Similar to task notifications provided by FreeRTOS but this is
+ *          task safe so state is shared amongst tasks. That means different
+ *          tasks can use the same completion state.
+ *
+ * ucDone       done flag to indicate that event occurred.
+ * xTaskHandle  pointer to the current task that is waiting on the completion.
  */
 typedef struct completion
 {

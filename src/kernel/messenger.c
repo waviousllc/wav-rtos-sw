@@ -20,7 +20,7 @@
     #define CONFIG_MESSAGE_QUEUE_LENGTH         (4)
 #endif /* CONFIG_NOTIFICATION_QUEUE_LENGTH */
 #ifndef CONFIG_MESSENGER_TASK_PRIORITY
-    #define CONFIG_MESSENGER_TASK_PRIORITY      (configMAX_PRIORITIES - 2)
+    #define CONFIG_MESSENGER_TASK_PRIORITY      (configMAX_PRIORITIES - 4)
 #endif /* CONFIG_NOTIFICATION_TASK_PRIORITY */
 
 #define CONFIG_EVENT_QUEUE_LENGTH               (CONFIG_MESSAGE_QUEUE_LENGTH >> 1)
@@ -216,7 +216,6 @@ BaseType_t xSendMessage(UBaseType_t uAddress, Message_t *pxMessage)
     // Send
     return pxInterface->intf.xSend(pxInterface->intf.dev, (void *) pxMessage, sizeof(Message_t));
 }
-
 
 BaseType_t xReceiveMessage(UBaseType_t uAddress, Message_t *pxMessage)
 {

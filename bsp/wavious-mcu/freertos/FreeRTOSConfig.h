@@ -105,8 +105,8 @@
 
 /* Software timer definitions. SwitchC */
 #define configUSE_TIMERS                1
-#define configTIMER_TASK_PRIORITY       ( configMAX_PRIORITIES - 1 )
-#define configTIMER_QUEUE_LENGTH        4
+#define configTIMER_TASK_PRIORITY       1
+#define configTIMER_QUEUE_LENGTH        8
 /*
  * configTIMER_TASK_STACK_DEPTH must be a value greater than 80 + the sizeof the register saved.
  * The size of the register is differrent from a core to another, e.g. on RiscV

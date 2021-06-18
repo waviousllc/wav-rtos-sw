@@ -20,7 +20,7 @@
     #define CONFIG_FSM_EVENT_QUEUE_LENGTH (20)
 #endif /* CONFIG_FSM_EVENT_QUEUE_LENGTH */
 #ifndef CONFIG_FSM_TASK_PRIORITY
-    #define CONFIG_FSM_TASK_PRIORITY (configMAX_PRIORITIES - 1)
+    #define CONFIG_FSM_TASK_PRIORITY (configMAX_PRIORITIES - 3)
 #endif /* CONFIG_FSM_TASK_PRIORITY */
 
 #define CONFIG_FSM_STACK_SIZE_WORDS    (configMINIMAL_STACK_SIZE)
@@ -119,11 +119,9 @@ static void private_handle_internal_event(fsm_t *fsm, uint8_t new_state, void *d
  */
 static void private_handle_external_event(fsm_t *fsm, uint8_t new_state, void *data);
 
-
 /*******************************************************************************
 **                              IMPLEMENTATIONS
 *******************************************************************************/
-
 BaseType_t xFSMTaskInit(void)
 {
     configASSERT(xFSMEventQueue == NULL);
@@ -174,19 +172,8 @@ void fsm_register_state_change_callback(fsm_t *fsm, const state_change_cb_t cb, 
 
 void fsm_handle_internal_event(fsm_t *fsm, uint8_t new_state, void *data)
 {
-    FSMTaskEvent_t xEvent;
-    // Don't submit into queue if already running as FSM Task
-    if (xTaskGetCurrentTaskHandle() == xFSMTaskHandle)
-    {
-        private_handle_internal_event(fsm, new_state, data);
-        return;
-    }
-
-    xEvent.eTransitionType = eFSMTransitionInternalEvent;
-    xEvent.fsm = fsm;
-    xEvent.new_state = new_state;
-    xEvent.data = data;
-    xQueueSendToBack(xFSMEventQueue, &xEvent, portMAX_DELAY);
+    configASSERT(xTaskGetCurrentTaskHandle() == xFSMTaskHandle);
+    private_handle_internal_event(fsm, new_state, data);
 }
 
 void fsm_handle_external_event(fsm_t *fsm, uint8_t new_state, void *data)
