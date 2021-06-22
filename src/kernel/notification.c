@@ -16,15 +16,6 @@
 #include <kernel/notification.h>
 
 /*******************************************************************************
-**                                   MACROS
-*******************************************************************************/
-#ifndef CONFIG_NOTIFICATION_TASK_PRIORITY
-    #define CONFIG_NOTIFICATION_TASK_PRIORITY   (configMAX_PRIORITIES - 1)
-#endif /* CONFIG_NOTIFICATION_TASK_PRIORITY */
-
-#define CONFIG_NOTIFICATION_STACK_SIZE_WORDS    (configMINIMAL_STACK_SIZE)
-
-/*******************************************************************************
 **                           VARIABLE DECLARATIONS
 *******************************************************************************/
 static TaskHandle_t xNotificationTaskHandle = NULL;
@@ -48,7 +39,8 @@ static void prvNotificationTask(void *pvParameters);
 /*******************************************************************************
 **                              IMPLEMENTATIONS
 *******************************************************************************/
-BaseType_t xNotificationTaskInit(void)
+BaseType_t xNotificationTaskInit(UBaseType_t uxPriority,
+                                 configSTACK_DEPTH_TYPE usStackDepth)
 {
     configASSERT(xNotificationTaskHandle == NULL);
 
@@ -61,9 +53,9 @@ BaseType_t xNotificationTaskInit(void)
     // Create Task
     if (xTaskCreate(prvNotificationTask,
                     "Notification Task",
-                    CONFIG_NOTIFICATION_STACK_SIZE_WORDS,
+                    usStackDepth,
                     NULL,
-                    CONFIG_NOTIFICATION_TASK_PRIORITY,
+                    uxPriority,
                     &xNotificationTaskHandle) == pdFALSE)
     {
         return pdFALSE;

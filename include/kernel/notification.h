@@ -49,11 +49,15 @@ typedef struct NotificationEndpoint_t
  *
  * @details Initializes Notification Task for handling notifications.
  *
+ * @param[in]   uxPriority      Notification Task priority.
+ * @param[in]   usStackDepth    Stack depth in words for the Notification Task.
+ *
  * @return  returns whether initialization was successful.
  * @retval  pdTRUE if successful.
  * @retval  pdFALSE otherwise.
  */
-BaseType_t xNotificationTaskInit(void);
+BaseType_t xNotificationTaskInit(UBaseType_t uxPriority,
+                                 configSTACK_DEPTH_TYPE usStackDepth);
 
 /**
  * @brief   Initialize Notification Endpoint

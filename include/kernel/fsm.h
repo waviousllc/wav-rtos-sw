@@ -78,11 +78,17 @@ typedef struct fsm_t
  *
  * @details Initializes FSM Task for handling FSM events.
  *
- * @return  Returns whether intialization was successful.
+ * @param[in]   uxPriority      FSM Task priority.
+ * @param[in]   usStackDepth    Stack depth in words for the FSM Task.
+ * @param[in]   uxQueueLength   Length of FSM Event Queue.
+ *
+ * @return  Returns whether initialization was successful.
  * @retval  pdTRUE if successful.
  * @retval  pdFALSE otherwise.
  */
-BaseType_t xFSMTaskInit(void);
+BaseType_t xFSMTaskInit(UBaseType_t uxPriority,
+                        configSTACK_DEPTH_TYPE usStackDepth,
+                        UBaseType_t uxQueueLength);
 
 /**
  * @brief   Finite State Machine Initialization

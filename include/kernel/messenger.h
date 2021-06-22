@@ -72,12 +72,18 @@ typedef struct MesageInterface_t
  * @details Initializes the Messenger Task. This layer provides common interface
  *          for receiving messages from any driver implementation.
  *
+ * @param[in]   uxPriority      Messenger Task priority.
+ * @param[in]   usStackDepth    Stack depth in words for the Messenger Task.
+ * @param[in]   uxQueueLength   Length of Messenger Event Queue.
+ *
  * @return      returns whether initialization was successful.
  *
  * @retval      pdTRUE if successful.
  * @retval      pdFALSE otherwise.
  */
-BaseType_t xMessengerTaskInit(void);
+BaseType_t xMessengerTaskInit(UBaseType_t uxPriority,
+                              configSTACK_DEPTH_TYPE usStackDepth,
+                              UBaseType_t uxQueueLength);
 
 /**
  * @brief   Messenger Interface Register Physical Interface

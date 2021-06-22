@@ -14,18 +14,6 @@
 #include <queue.h>
 
 /*******************************************************************************
-**                                   MACROS
-*******************************************************************************/
-#ifndef CONFIG_FSM_EVENT_QUEUE_LENGTH
-    #define CONFIG_FSM_EVENT_QUEUE_LENGTH (20)
-#endif /* CONFIG_FSM_EVENT_QUEUE_LENGTH */
-#ifndef CONFIG_FSM_TASK_PRIORITY
-    #define CONFIG_FSM_TASK_PRIORITY (configMAX_PRIORITIES - 3)
-#endif /* CONFIG_FSM_TASK_PRIORITY */
-
-#define CONFIG_FSM_STACK_SIZE_WORDS    (configMINIMAL_STACK_SIZE)
-
-/*******************************************************************************
 **                            STRUCTURE DECLARATIONS
 *******************************************************************************/
 /**
@@ -122,7 +110,9 @@ static void private_handle_external_event(fsm_t *fsm, uint8_t new_state, void *d
 /*******************************************************************************
 **                              IMPLEMENTATIONS
 *******************************************************************************/
-BaseType_t xFSMTaskInit(void)
+BaseType_t xFSMTaskInit(UBaseType_t uxPriority,
+                        configSTACK_DEPTH_TYPE usStackDepth,
+                        UBaseType_t uxQueueLength)
 {
     configASSERT(xFSMEventQueue == NULL);
     configASSERT(xFSMTaskHandle == NULL);
@@ -133,7 +123,7 @@ BaseType_t xFSMTaskInit(void)
         return pdFALSE;
     }
     // Create Event Queue
-    xFSMEventQueue = xQueueCreate(CONFIG_FSM_EVENT_QUEUE_LENGTH, sizeof(FSMTaskEvent_t));
+    xFSMEventQueue = xQueueCreate(uxQueueLength, sizeof(FSMTaskEvent_t));
     configASSERT(xFSMEventQueue != NULL);
     if (xFSMEventQueue == NULL)
     {
@@ -143,9 +133,9 @@ BaseType_t xFSMTaskInit(void)
     // Create Task if not already done
     if (xTaskCreate(prvFSMTask,
                     "FSM Task",
-                    CONFIG_FSM_STACK_SIZE_WORDS,
+                    usStackDepth,
                     NULL,
-                    CONFIG_FSM_TASK_PRIORITY,
+                    uxPriority,
                     &xFSMTaskHandle) == pdFALSE)
     {
         return pdFALSE;
