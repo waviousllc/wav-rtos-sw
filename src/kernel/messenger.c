@@ -16,16 +16,6 @@
 /*******************************************************************************
 **                                   MACROS
 *******************************************************************************/
-#ifndef CONFIG_MESSAGE_QUEUE_LENGTH
-    #define CONFIG_MESSAGE_QUEUE_LENGTH         (4)
-#endif /* CONFIG_NOTIFICATION_QUEUE_LENGTH */
-#ifndef CONFIG_MESSENGER_TASK_PRIORITY
-    #define CONFIG_MESSENGER_TASK_PRIORITY      (configMAX_PRIORITIES - 4)
-#endif /* CONFIG_NOTIFICATION_TASK_PRIORITY */
-
-#define CONFIG_EVENT_QUEUE_LENGTH               (CONFIG_MESSAGE_QUEUE_LENGTH >> 1)
-#define CONFIG_MESSENGER_STACK_SIZE_WORDS       (configMINIMAL_STACK_SIZE)
-
 #define FREE_DESCRIPTOR(DESCRIPTOR)                                         \
     {                                                                       \
         uxListRemove(&DESCRIPTOR->xMessageItem);                            \
@@ -42,12 +32,14 @@ static List_t xInterfaceList;
 static List_t xFreeDescriptorsList;
 static SemaphoreHandle_t xMessageDescriptorsSemaphore = NULL;
 
-/* Pool of Message Descriptors that exist in the system. */
-static struct MessageDescriptor_t
+typedef struct MessageDescriptor_t
 {
     Message_t msg;
     ListItem_t xMessageItem;
-} xMessageDescriptors[CONFIG_MESSAGE_QUEUE_LENGTH];
+} MessageDescriptor_t;
+
+/* Pool of Message Descriptors that exist in the system. */
+static MessageDescriptor_t *xMessageDescriptors;
 
 /*******************************************************************************
 **                            FUNCTION DECLARATIONS
@@ -81,7 +73,9 @@ MessageInterface_t *pxLookupPhyInterface(UBaseType_t uAddress);
 /*******************************************************************************
 **                              IMPLEMENTATIONS
 *******************************************************************************/
-BaseType_t xMessengerTaskInit(void)
+BaseType_t xMessengerTaskInit(UBaseType_t uxPriority,
+                              configSTACK_DEPTH_TYPE usStackDepth,
+                              UBaseType_t uxQueueLength)
 {
     configASSERT(xEventQueue == NULL);
     configASSERT(xMessengerTaskHandle == NULL);
@@ -95,7 +89,7 @@ BaseType_t xMessengerTaskInit(void)
     }
 
     // Create Event Queue
-    xEventQueue = xQueueCreate(CONFIG_EVENT_QUEUE_LENGTH, sizeof(UBaseType_t));
+    xEventQueue = xQueueCreate(uxQueueLength, sizeof(UBaseType_t));
     configASSERT(xEventQueue != NULL);
     if (xEventQueue == NULL)
     {
@@ -103,8 +97,8 @@ BaseType_t xMessengerTaskInit(void)
     }
 
     // Create Descriptors Semaphore
-    xMessageDescriptorsSemaphore = xSemaphoreCreateCounting((UBaseType_t) CONFIG_MESSAGE_QUEUE_LENGTH,
-                                                            (UBaseType_t) CONFIG_MESSAGE_QUEUE_LENGTH);
+    xMessageDescriptorsSemaphore = xSemaphoreCreateCounting((UBaseType_t) uxQueueLength,
+                                                            (UBaseType_t) uxQueueLength);
     configASSERT(xMessageDescriptorsSemaphore != NULL);
     if (xMessageDescriptorsSemaphore == NULL)
     {
@@ -114,9 +108,9 @@ BaseType_t xMessengerTaskInit(void)
     // Create Task
     if (xTaskCreate(prvMessengerTask,
                     "Messenger Task",
-                    CONFIG_MESSENGER_STACK_SIZE_WORDS,
+                    usStackDepth,
                     NULL,
-                    CONFIG_MESSENGER_TASK_PRIORITY,
+                    uxQueueLength,
                     &xMessengerTaskHandle) == pdFALSE)
     {
         return pdFALSE;
@@ -128,8 +122,17 @@ BaseType_t xMessengerTaskInit(void)
     // Initialize Free Descriptor List
     vListInitialise(&xFreeDescriptorsList);
 
+    // Allocate descriptors
+    xMessageDescriptors = (MessageDescriptor_t *) pvPortMalloc(sizeof(MessageDescriptor_t) * uxQueueLength);
+    if (xMessageDescriptors == NULL)
+    {
+        vTaskDelete(xMessengerTaskHandle);
+        vQueueDelete(xEventQueue);
+        return pdFALSE;
+    }
+
     // Initialize Descriptors
-    for (uint8_t i = 0; i < CONFIG_MESSAGE_QUEUE_LENGTH; i++)
+    for (uint8_t i = 0; i < uxQueueLength; i++)
     {
         vListInitialiseItem(&xMessageDescriptors[i].xMessageItem);
         listSET_LIST_ITEM_OWNER(&xMessageDescriptors[i].xMessageItem, &xMessageDescriptors[i]);
