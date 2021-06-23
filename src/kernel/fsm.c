@@ -197,6 +197,7 @@ void fsm_handle_interrupt_event(fsm_t *fsm, uint8_t new_state, void *data)
 static void fsm_update(fsm_t *fsm)
 {
     bool guard_result = true;
+    uint8_t prev;
 
     while (!fsm->event_handled)
     {
@@ -206,25 +207,33 @@ static void fsm_update(fsm_t *fsm)
 
         fsm->event_handled = 1;
 
+        // Call guard if there is one for this state
         if (guard != NULL)
         {
             guard_result = guard(fsm, fsm->data);
         }
 
+        // Only execute if guard allows
         if (guard_result)
         {
-            if (fsm->next_state != fsm->current_state)
-            {
-                if (exit != NULL)
-                {
-                    exit(fsm);
-                }
-            }
+            // Update current state
+            prev = fsm->current_state;
             fsm->current_state = fsm->next_state;
+
+            // Execute exit function on state change
+            if (exit != NULL &&
+                prev != fsm->current_state)
+            {
+                exit(fsm);
+            }
+
+            // Execute callback if registered
             if (fsm->state_cb)
             {
                 fsm->state_cb(fsm, fsm->current_state, fsm->cb_args);
             }
+
+            // Execute state handler
             handler(fsm, fsm->data);
         }
     }
