@@ -147,10 +147,13 @@ void vApplicationTickHook( void )
 {
     /* The tests in the full demo expect some interaction with interrupts. */
 }
-/*-----------------------------------------------------------*/
 
-void vAssertCalled( void )
+/*-----------------------------------------------------------*/
+void vAssertCalled( const char * const pcFileName, unsigned long ulLine )
 {
+    // Unused parameters
+    (void) pcFileName;
+    (void) ulLine;
     taskDISABLE_INTERRUPTS();
     _exit(1);
 }
