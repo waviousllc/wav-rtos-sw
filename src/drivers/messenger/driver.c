@@ -235,7 +235,7 @@ static void messenger_req_irq_handler(int irq_num, void *args)
     message_interface_t *messenger = (message_interface_t *) args;
 
     // Make sure this is the correct inerface
-    configASSERT(irq_num == messenger->irq.req)
+    configASSERT(irq_num == messenger->irq.req);
 
     // Clear IRQ
     messenger_clear_req_reg_if(messenger);
