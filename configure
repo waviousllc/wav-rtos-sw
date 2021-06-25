@@ -2,8 +2,7 @@
 # Configures build environment for appropriate target architecture
 
 # Definitions
-RISCV64_TOOLCHAIN="toolchain/riscv64.toolchain"
-RISCV32_TOOLCHAIN="toolchain/riscv32.toolchain"
+RISCV_TOOLCHAIN="toolchain/riscv.toolchain"
 BUILD_DIR="build"
 
 # Variables
@@ -19,7 +18,7 @@ init_build_common() {
 
 init_riscv64() {
   cd ${BUILD_DIR}
-  cmake .. -DCMAKE_TOOLCHAIN_FILE=../${RISCV64_TOOLCHAIN} \
+  cmake .. -DCMAKE_TOOLCHAIN_FILE=../${RISCV_TOOLCHAIN} \
            -DCONFIG_SRC_ARCH="riscv" \
            -DCONFIG_TARGET_ARCH="riscv64" \
            -DCONFIG_TARGET_BOARD=${CONFIG_TARGET_BOARD} \
@@ -29,7 +28,7 @@ init_riscv64() {
 
 init_riscv32() {
   cd ${BUILD_DIR}
-  cmake .. -DCMAKE_TOOLCHAIN_FILE=../${RISCV32_TOOLCHAIN} \
+  cmake .. -DCMAKE_TOOLCHAIN_FILE=../${RISCV_TOOLCHAIN} \
            -DCONFIG_SRC_ARCH="riscv" \
            -DCONFIG_TARGET_ARCH="riscv32" \
            -DCONFIG_TARGET_BOARD=${CONFIG_TARGET_BOARD} \
