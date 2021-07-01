@@ -97,9 +97,16 @@ SECTIONS
      */
 
     .init : {
+        KEEP (*(.image_hdr))
+        PROVIDE(g_note_build_id = .);
+        KEEP(*(.note.gnu.build-id))
+        . = ORIGIN(rom) + 0x80;
+        KEEP (*(.boot))
+        . = ALIGN(256);
         KEEP (*(.trap_handler_vector))
         /* The _enter symbol is placed in the .text.metal.init.enter section
          * and must be placed at the beginning of the program */
+        PROVIDE(__start = .);
         KEEP (*(.text.metal.init.enter))
         KEEP (*(.text.metal.init.*))
         KEEP (*(SORT_NONE(.init)))
@@ -144,7 +151,7 @@ SECTIONS
         . = ALIGN(32);
         __privileged_functions_end__ = .;
     } >rom
- 
+
 
     .ctors : {
         . = ALIGN(32);

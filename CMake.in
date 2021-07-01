@@ -1,6 +1,8 @@
 # Setup Toplevel directory
 set(WAV_RTOS_TOP_LEVEL "${CMAKE_CURRENT_LIST_DIR}")
 
+include(${WAV_RTOS_TOP_LEVEL}/wav-build/cmake/CMake.in)
+
 # If heap allocation scheme not defined, set to default
 if(NOT DEFINED RTOS_HEAP_ALLOC_SCHEME)
     set(RTOS_HEAP_ALLOC_SCHEME "4")

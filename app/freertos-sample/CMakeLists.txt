@@ -20,7 +20,17 @@ target_include_directories(
     PRIVATE
     ${APP_DIR}
     ${WAV_RTOS_TOP_LEVEL}/bsp/${CONFIG_TARGET_BOARD}/freertos
+    ${WAV_BUILD_TOP_LEVEL}/include
 )
+
+target_compile_definitions(
+    ${PROJECT_NAME}
+    PRIVATE
+    -DGIT_SHA=\"${VERSION_GIT_SHA}\"
+    -DGIT_DIRTY=${VERSION_DIRTY}
+    -DGIT_AHEAD=${VERSION_AHEAD}
+)
+
 target_link_libraries(${PROJECT_NAME}
     "-Wl,--start-group"
     c
@@ -38,6 +48,7 @@ target_link_options(
     -T ${LINKER_SCRIPT}
     -Wl,--defsym,__stack_size=0x200
     -Wl,--defsym,__heap_size=0x0
+    -Wl,--build-id
 )
 
 add_custom_command(TARGET ${PROJECT_NAME}
@@ -45,5 +56,4 @@ add_custom_command(TARGET ${PROJECT_NAME}
         COMMAND ${CMAKE_OBJDUMP} ${PROJECT_NAME} --source --all-headers --demangle --line-numbers --wide > ${PROJECT_NAME}.dump
         WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
 )
-
 bsp_post_build(${PROJECT_NAME})

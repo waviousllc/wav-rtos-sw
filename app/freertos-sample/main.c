@@ -8,6 +8,9 @@
 #include <string.h>
 #include <unistd.h>
 
+/* Image header includes. */
+#include <image.h>
+
 /* Kernel includes. */
 #include "FreeRTOS.h"
 #include "task.h"
@@ -21,6 +24,25 @@
 #include <metal/uart.h>
 #include <metal/interrupt.h>
 #include <metal/clock.h>
+
+/*-----------------------------------------------------------*/
+extern uint32_t __start;
+img_hdr_t image_hdr __attribute__((section(".image_hdr"))) = {
+    .image_magic = IMAGE_MAGIC,
+    .image_hdr_version = IMAGE_VERSION_CURRENT,
+    .image_type = IMAGE_TYPE_APP,
+    .version_major = 1,
+    .version_minor = 0,
+    .version_patch = 0,
+    .vector_addr = (uint32_t) &__start,
+    .device_id = IMAGE_DEVICE_ID_HOST,
+    .git_dirty = GIT_DIRTY,
+    .git_ahead = GIT_AHEAD,
+    .git_sha = GIT_SHA,
+    // populated as part of a post compilation step
+    .crc = 0,
+    .data_size = 0,
+};
 
 /*-----------------------------------------------------------*/
 /*

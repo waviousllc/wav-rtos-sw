@@ -18,6 +18,7 @@ target_sources(
     bsp_freertos
     INTERFACE
     ${WAV_RTOS_TOP_LEVEL}/bsp/${CONFIG_TARGET_BOARD}/freertos/vector.S
+    ${WAV_RTOS_TOP_LEVEL}/bsp/${CONFIG_TARGET_BOARD}/freertos/boot.S
 )
 
 target_compile_options(
@@ -29,6 +30,7 @@ target_compile_options(
 )
 
 macro(bsp_post_build target)
+    patch_image_header(${target} "${TOOLCHAIN_PREFIX}")
     add_custom_command(TARGET ${target}
         POST_BUILD
         COMMAND ${CMAKE_OBJCOPY} ${target} -O binary ${target}_itcm.bin -j .text -j .init

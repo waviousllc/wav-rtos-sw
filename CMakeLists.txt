@@ -10,7 +10,13 @@ if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
     # Make sure everything is built for correct architecture
     set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS}")
     set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -DDEBUG")
+
+    # Build configuration
     include(${CMAKE_CURRENT_LIST_DIR}/CMake.in)
+
+    # Build versioning
+    set(VERSION_UPDATE_FROM_GIT TRUE)
+    find_package(BuildInfo REQUIRED)
 
     # Setup default compile options
     add_compile_options(
