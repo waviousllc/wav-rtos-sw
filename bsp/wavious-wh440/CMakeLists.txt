@@ -24,6 +24,7 @@ target_compile_options(
 )
 
 macro(bsp_post_build target)
+    patch_image_header(${target} "${TOOLCHAIN_PREFIX}")
     add_custom_command(TARGET ${target}
             POST_BUILD
             COMMAND ${CMAKE_OBJCOPY} ${target} -O binary  ${target}.bin

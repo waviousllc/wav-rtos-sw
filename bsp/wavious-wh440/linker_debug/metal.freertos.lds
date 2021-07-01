@@ -90,8 +90,12 @@ SECTIONS
      */
 
     .init : {
+        KEEP (*(.image_hdr))
+        PROVIDE(g_note_build_id = .);
+        KEEP(*(.note.gnu.build-id)
         /* The _enter symbol is placed in the .text.metal.init.enter section
          * and must be placed at the beginning of the program */
+        PROVIDE(__start = .);
         KEEP (*(.text.metal.init.enter))
         KEEP (*(.text.metal.init.*))
         KEEP (*(SORT_NONE(.init)))
