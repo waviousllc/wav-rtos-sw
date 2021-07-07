@@ -1,0 +1,8 @@
+/include/ "core.dts"
+/ {
+    chosen {
+        metal,boothart = <&L3>;
+        metal,entry = <&L7 0 0x80>;
+        metal,ram = <&L5 0 0>;
+    };
+};

@@ -1,0 +1,2 @@
+The kernel is a small shim layer that sits on top of freedom-metal code
+that provides a standard IRQ / IO interface for all Wavious Devices and Drivers.
