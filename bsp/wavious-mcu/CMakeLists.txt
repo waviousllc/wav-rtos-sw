@@ -29,12 +29,18 @@ target_compile_options(
     -DWAV_MESSENGER_INTF_HOST=${CONFIG_WAV_MESSENGER_INTF_HOST}
 )
 
-macro(bsp_post_build target)
-    patch_image_header(${target} "${TOOLCHAIN_PREFIX}")
-    add_custom_command(TARGET ${target}
+macro(bsp_post_build TARGET)
+    get_property(WORKING_DIRECTORY TARGET ${TARGET} PROPERTY RUNTIME_OUTPUT_DIRECTORY)
+    patch_image_header(${TARGET} "${TOOLCHAIN_PREFIX}" ${WORKING_DIRECTORY})
+    add_custom_command(TARGET ${TARGET}
         POST_BUILD
-        COMMAND ${CMAKE_OBJCOPY} ${target} -O binary ${target}_itcm.bin -j .text -j .init
-        COMMAND ${CMAKE_OBJCOPY} ${target} -O binary ${target}_dtcm.bin -j .preinit_array -j .init_array -j .fini_array -j .rodata -j .data -j .tdata -j .tbss -j .bss
-        WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+        COMMAND ${CMAKE_OBJDUMP} ${TARGET} --source --all-headers --demangle --line-numbers --wide > ${TARGET}.dump
+        WORKING_DIRECTORY ${WORKING_DIRECTORY}
+    )
+    add_custom_command(TARGET ${TARGET}
+        POST_BUILD
+        COMMAND ${CMAKE_OBJCOPY} ${TARGET} -O binary ${TARGET}_itcm.bin -j .text -j .init
+        COMMAND ${CMAKE_OBJCOPY} ${TARGET} -O binary ${TARGET}_dtcm.bin -j .preinit_array -j .init_array -j .fini_array -j .rodata -j .data -j .tdata -j .tbss -j .bss
+        WORKING_DIRECTORY ${WORKING_DIRECTORY}
     )
 endmacro()

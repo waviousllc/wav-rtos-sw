@@ -23,11 +23,17 @@ target_compile_options(
     -DWAV_MESSENGER_INTF_HOST=${CONFIG_WAV_MESSENGER_INTF_HOST}
 )
 
-macro(bsp_post_build target)
-    patch_image_header(${target} "${TOOLCHAIN_PREFIX}")
-    add_custom_command(TARGET ${target}
+macro(bsp_post_build TARGET)
+    get_property(WORKING_DIRECTORY TARGET ${TARGET} PROPERTY RUNTIME_OUTPUT_DIRECTORY)
+    patch_image_header(${TARGET} "${TOOLCHAIN_PREFIX}" ${WORKING_DIRECTORY})
+    add_custom_command(TARGET ${TARGET}
+        POST_BUILD
+        COMMAND ${CMAKE_OBJDUM%P} ${TARGET} --source --all-headers --demangle --line-numbers --wide > ${TARGET}.dump
+        WORKING_DIRECTORY ${WORKING_DIRECTORY}
+    )
+    add_custom_command(TARGET ${TARGET}
             POST_BUILD
-            COMMAND ${CMAKE_OBJCOPY} ${target} -O binary  ${target}.bin
-            WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+            COMMAND ${CMAKE_OBJCOPY} ${TARGET} -O binary  ${TARGET}.bin
+            WORKING_DIRECTORY ${WORKING_DIRECTORY}
     )
 endmacro()
