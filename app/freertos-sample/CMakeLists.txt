@@ -51,9 +51,4 @@ target_link_options(
     -Wl,--build-id
 )
 
-add_custom_command(TARGET ${PROJECT_NAME}
-        POST_BUILD
-        COMMAND ${CMAKE_OBJDUMP} ${PROJECT_NAME} --source --all-headers --demangle --line-numbers --wide > ${PROJECT_NAME}.dump
-        WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
-)
 bsp_post_build(${PROJECT_NAME})
