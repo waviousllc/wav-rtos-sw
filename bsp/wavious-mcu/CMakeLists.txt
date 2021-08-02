@@ -6,6 +6,31 @@ set(CONFIG_WAV_MCU_IRQ_EDGE_CFG 0x1FFFFBFC)
 # wavious-mcu is type client, set host to 0x0
 set(CONFIG_WAV_MESSENGER_INTF_HOST 0x0)
 
+FILE(
+    GLOB_RECURSE
+    BSP_METAL_SOURCES
+    ${WAV_RTOS_TOP_LEVEL}/bsp/${CONFIG_TARGET_BOARD}/metal/riscv_cpu_min.c
+    ${WAV_RTOS_TOP_LEVEL}/freedom-metal/src/*.c
+    ${WAV_RTOS_TOP_LEVEL}/freedom-metal/src/*.S
+)
+
+list(
+    REMOVE_ITEM
+    BSP_METAL_SOURCES
+    ${WAV_RTOS_TOP_LEVEL}/freedom-metal/src/drivers/riscv_cpu.c
+)
+
+FILE(
+    GLOB
+    BSP_FREERTOS_SOURCES
+    ${WAV_RTOS_TOP_LEVEL}/FreeRTOS-Kernel/*.c
+    ${WAV_RTOS_TOP_LEVEL}/FreeRTOS-Kernel/portable/GCC/RISC-V/*.c
+    ${WAV_RTOS_TOP_LEVEL}/FreeRTOS-Kernel/portable/GCC/RISC-V/*.S
+    ${WAV_RTOS_TOP_LEVEL}/FreeRTOS-Kernel/portable/MemMang/heap_${RTOS_HEAP_ALLOC_SCHEME}.c
+    ${WAV_RTOS_TOP_LEVEL}/bsp/${CONFIG_TARGET_BOARD}/freertos/Bridge_Freedom-metal_FreeRTOS.c
+    ${WAV_RTOS_TOP_LEVEL}/bsp/${CONFIG_TARGET_BOARD}/freertos/vector.S
+)
+
 #-------------------------------#
 #     FreeRTOS Library          #
 #-------------------------------#
@@ -14,11 +39,12 @@ add_library(
     INTERFACE
 )
 
-target_sources(
+target_include_directories(
     bsp_freertos
     INTERFACE
-    ${WAV_RTOS_TOP_LEVEL}/bsp/${CONFIG_TARGET_BOARD}/freertos/vector.S
-    ${WAV_RTOS_TOP_LEVEL}/bsp/${CONFIG_TARGET_BOARD}/freertos/boot.S
+    ${WAV_RTOS_TOP_LEVEL}/FreeRTOS-Kernel/include
+    ${WAV_RTOS_TOP_LEVEL}/FreeRTOS-Kernel/portable/GCC/RISC-V/
+    ${WAV_RTOS_TOP_LEVEL}/bsp/${CONFIG_TARGET_BOARD}/freertos
 )
 
 target_compile_options(
