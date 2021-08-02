@@ -40,13 +40,6 @@ include(${WAV_RTOS_TOP_LEVEL}/bsp/${CONFIG_TARGET_BOARD}/CMakeLists.txt)
 # Create Metal Library
 FILE(
     GLOB_RECURSE
-    METAL_SRC
-    ${WAV_RTOS_TOP_LEVEL}/freedom-metal/src/*.c
-    ${WAV_RTOS_TOP_LEVEL}/freedom-metal/src/*.S
-)
-
-FILE(
-    GLOB_RECURSE
     GLOSS_SRC
     ${WAV_RTOS_TOP_LEVEL}/freedom-metal/gloss/*.c
     ${WAV_RTOS_TOP_LEVEL}/freedom-metal/gloss/*.S
@@ -54,7 +47,7 @@ FILE(
 
 set(
     METAL_LIB_SRC
-    ${METAL_SRC}
+    ${BSP_METAL_SOURCES}
     ${GLOSS_SRC}
 )
 
@@ -72,32 +65,23 @@ target_compile_options(
     -Wno-array-bounds
 )
 
+target_link_libraries(
+    metal
+    "-Wl,--start-group"
+    c
+    gcc
+    m
+    "-Wl,--end-group"
+)
+
 #-------------------------------#
 #     FreeRTOS Library          #
 #-------------------------------#
 # Create FreeRTOS Library
-FILE(
-    GLOB
-    FREERTOS_SRC
-    ${WAV_RTOS_TOP_LEVEL}/FreeRTOS-Kernel/*.c
-    ${WAV_RTOS_TOP_LEVEL}/FreeRTOS-Kernel/portable/GCC/RISC-V/*.c
-    ${WAV_RTOS_TOP_LEVEL}/FreeRTOS-Kernel/portable/GCC/RISC-V/*.S
-    ${WAV_RTOS_TOP_LEVEL}/FreeRTOS-Kernel/portable/MemMang/heap_${RTOS_HEAP_ALLOC_SCHEME}.c
-    ${WAV_RTOS_TOP_LEVEL}/bsp/${CONFIG_TARGET_BOARD}/freertos/Bridge_Freedom-metal_FreeRTOS.c
-)
-
 add_library(
     freertos
     STATIC
-    ${FREERTOS_SRC}
-)
-
-target_include_directories(
-    freertos
-    PUBLIC
-    ${WAV_RTOS_TOP_LEVEL}/FreeRTOS-Kernel/include
-    ${WAV_RTOS_TOP_LEVEL}/FreeRTOS-Kernel/portable/GCC/RISC-V/
-    ${WAV_RTOS_TOP_LEVEL}/bsp/${CONFIG_TARGET_BOARD}/freertos
+    ${BSP_FREERTOS_SOURCES}
 )
 
 target_compile_options(
@@ -106,7 +90,11 @@ target_compile_options(
     ${BSP_FREERTOS_COMPILE_OPTIONS}
 )
 
-target_link_libraries(freertos metal bsp_freertos)
+target_link_libraries(
+    freertos
+    metal
+    bsp_freertos
+)
 
 #-------------------------------#
 #      Everything else          #

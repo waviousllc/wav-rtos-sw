@@ -32,14 +32,7 @@ target_compile_definitions(
 )
 
 target_link_libraries(${PROJECT_NAME}
-    "-Wl,--start-group"
-    c
-    gcc
-    m
-    metal
     kernel
-    freertos
-    "-Wl,--end-group"
 )
 
 target_link_options(

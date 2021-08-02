@@ -21,13 +21,26 @@
 
 #define TIMER_INC_ONE_TICK  ((size_t) ( ( configCPU_CLOCK_HZ ) / ( configTICK_RATE_HZ ) ))
 
-static uint64_t ullNextTime = 0ULL;
-static volatile uint64_t *pullMachineTimerCompareRegister;
-
 __attribute__ ((aligned(4))) uint8_t ucHeap[ configTOTAL_HEAP_SIZE ] __attribute__ ((section (".heap")));
 
 __attribute__((constructor)) static void FreeRTOS_init(void);
 
+/**
+ * Override weak declarations as not needed for our application.
+ */
+void metal_init_run(void)
+{
+    // Intentionally empty
+}
+
+void metal_fini_run(void)
+{
+    // Intentionally empty
+}
+
+#if ( configUSE_TIMERS == 1 )
+static uint64_t ullNextTime = 0ULL;
+static volatile uint64_t *pullMachineTimerCompareRegister;
 void vPortSetupTimerInterrupt( void )
 {
        uint32_t ulCurrentTimeHigh, ulCurrentTimeLow;
@@ -57,6 +70,7 @@ void vPortSetupTimerInterrupt( void )
        // Turn on timer interrupt
        __asm__ volatile("csrs mie, %0" :: "r"(0x80));
 }
+#endif /* configUSE_TIMERS == 1 */
 
 __attribute__((constructor)) static void FreeRTOS_init(void)
 {
@@ -68,7 +82,7 @@ __attribute__((constructor)) static void FreeRTOS_init(void)
 
     /* Remove compiler warning about unused parameter. */
     ( void ) pcErrorMsg;
-    
+
     // Initialize Metal interrupt controllers
     cpu = metal_cpu_get(metal_cpu_get_current_hartid());
     if (cpu == NULL)
@@ -112,19 +126,20 @@ void FreedomMetal_InterruptHandler( uint32_t cause )
     int id;
     void *priv;
     struct __metal_driver_riscv_cpu_intc *intc;
-    struct __metal_driver_cpu *cpu;
+    struct metal_cpu *cpu;
     portUBASE_TYPE hartid;
 
     __asm__ __volatile__ ("csrr %0, mhartid" : "=r"(hartid));
 
-    cpu = __metal_cpu_table[hartid];
+    cpu = metal_cpu_get(metal_cpu_get_current_hartid());
 
     if ( cpu ) {
 
         intc = (struct __metal_driver_riscv_cpu_intc *)
-          __metal_driver_cpu_interrupt_controller((struct metal_cpu *)cpu);
+          __metal_driver_cpu_interrupt_controller(cpu);
         id = cause & METAL_MCAUSE_CAUSE;
 
+    #if ( configUSE_TIMERS == 1 )
         if (id == METAL_INTERRUPT_ID_TMR)
         {
             *pullMachineTimerCompareRegister = ullNextTime;
@@ -135,6 +150,8 @@ void FreedomMetal_InterruptHandler( uint32_t cause )
             }
             return;
         }
+    #endif /* configUSE_TIMERS == 1 */
+
         /**
          * Local and External Interrupts call into metal where user
          * registered ISR for each of these interrupts. Regardless
@@ -146,35 +163,6 @@ void FreedomMetal_InterruptHandler( uint32_t cause )
                 intc->metal_int_table[id].handler(id, priv);
         }
     }
-}
-
-void FreedomMetal_ExceptionHandler( void )
-{
-    int id;
-    uintptr_t mcause, hartid;
-    struct __metal_driver_riscv_cpu_intc *intc;
-    struct __metal_driver_cpu *cpu;
-
-    __asm__ __volatile__ ("csrr %0, mhartid" : "=r"(hartid));
-    cpu = __metal_cpu_table[hartid];
-
-    if ( cpu ) {
-        intc = (struct __metal_driver_riscv_cpu_intc *)
-          __metal_driver_cpu_interrupt_controller((struct metal_cpu *)cpu);
-
-        __asm__ __volatile__ ("csrr %0, mcause" : "=r"(mcause));
-        id = mcause & METAL_MCAUSE_CAUSE;
-
-        configASSERT( id < METAL_ECALL_U_EXCEPTION_CODE );
-
-        if (id < METAL_ECALL_U_EXCEPTION_CODE) {
-            if (intc->metal_exception_table[id] != NULL)
-                intc->metal_exception_table[id]((struct metal_cpu *)cpu, id);
-        }
-    }
-
-    for( ;; ); // return is dangerous, we just got a critical exception.
-    return;
 }
 
 // Defined in printf.c
