@@ -69,7 +69,7 @@
 #include <metal/drivers/fixed-clock.h>
 #include <metal/memory.h>
 #include <metal/drivers/riscv_clint0.h>
-#include <metal/drivers/riscv_cpu.h>
+#include <metal/drivers/riscv_cpu_min.h>
 #include <metal/pmp.h>
 
 /* From refclk */
@@ -83,9 +83,9 @@ extern struct metal_memory __metal_dt_mem_itim_10000;
 extern struct __metal_driver_riscv_clint0 __metal_dt_clint_8000;
 
 /* From cpu@0 */
-extern struct __metal_driver_cpu __metal_dt_cpu_0;
+extern struct __metal_driver_cpu_min __metal_dt_cpu_0;
 
-extern struct __metal_driver_riscv_cpu_intc __metal_dt_cpu_0_interrupt_controller;
+extern struct __metal_driver_riscv_cpu_min_intc __metal_dt_cpu_0_interrupt_controller;
 
 extern struct metal_pmp __metal_dt_pmp;
 
@@ -300,7 +300,7 @@ struct metal_memory *__metal_memory_table[] = {
 #define __METAL_DT_MAX_HARTS 1
 
 __asm__ (".weak __metal_cpu_table");
-struct __metal_driver_cpu *__metal_cpu_table[] = {
+struct __metal_driver_cpu_min *__metal_cpu_table[] = {
                     &__metal_dt_cpu_0};
 
 #define __METAL_DT_PMP_HANDLE (&__metal_dt_pmp)

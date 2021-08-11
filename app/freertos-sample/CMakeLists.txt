@@ -32,14 +32,7 @@ target_compile_definitions(
 )
 
 target_link_libraries(${PROJECT_NAME}
-    "-Wl,--start-group"
-    c
-    gcc
-    m
-    metal
     kernel
-    freertos
-    "-Wl,--end-group"
 )
 
 target_link_options(
@@ -51,9 +44,4 @@ target_link_options(
     -Wl,--build-id
 )
 
-add_custom_command(TARGET ${PROJECT_NAME}
-        POST_BUILD
-        COMMAND ${CMAKE_OBJDUMP} ${PROJECT_NAME} --source --all-headers --demangle --line-numbers --wide > ${PROJECT_NAME}.dump
-        WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
-)
 bsp_post_build(${PROJECT_NAME})

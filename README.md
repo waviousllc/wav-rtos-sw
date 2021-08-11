@@ -28,3 +28,20 @@ can be started by running the following command from the root of this project:
 Docker container.
 
 ---
+
+## FSM vs StateMachine
+FSM provides a dedicated task that all FSMs share. FSM events are submitted
+to a queue and processed directly by the FSM task, which move the FSM
+between diferrent states. This can be nice to have when the software has
+many FSMs that need to be used but doesn't need tight control of the
+run loop. It can save memory by having all events processed in a single
+place and dispatched to the appropriate FSM.
+
+Some implementations, such as a firmware, need better performance and would
+like tight control of their event loop and context switching. StateMachine
+offers a non-threaded implementation that can be used for these cases.
+
+### Background
+Originally, FSM was the only implementation and the need for StateMachine
+was realized later. For compatibility reasons, the FSM implementation
+was kept around and a unique non-threaded implementation was added.

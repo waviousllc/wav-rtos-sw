@@ -2,6 +2,25 @@
 # wavious-wh440 is type host, set host to 0x1
 set(CONFIG_WAV_MESSENGER_INTF_HOST 0x1)
 
+FILE(
+    GLOB_RECURSE
+    BSP_METAL_SOURCES
+    ${WAV_RTOS_TOP_LEVEL}/freedom-metal/src/*.c
+    ${WAV_RTOS_TOP_LEVEL}/freedom-metal/src/*.S
+)
+
+FILE(
+    GLOB
+    BSP_FREERTOS_SOURCES
+    ${WAV_RTOS_TOP_LEVEL}/FreeRTOS-Kernel/*.c
+    ${WAV_RTOS_TOP_LEVEL}/FreeRTOS-Kernel/portable/GCC/RISC-V/*.c
+    ${WAV_RTOS_TOP_LEVEL}/FreeRTOS-Kernel/portable/GCC/RISC-V/*.S
+    ${WAV_RTOS_TOP_LEVEL}/FreeRTOS-Kernel/portable/MemMang/heap_${RTOS_HEAP_ALLOC_SCHEME}.c
+    ${WAV_RTOS_TOP_LEVEL}/bsp/${CONFIG_TARGET_BOARD}/freertos/Bridge_Freedom-metal_FreeRTOS.c
+    ${WAV_RTOS_TOP_LEVEL}/bsp/${CONFIG_TARGET_BOARD}/freertos/printf.c
+    ${WAV_RTOS_TOP_LEVEL}/bsp/${CONFIG_TARGET_BOARD}/freertos/vector.S
+)
+
 #-------------------------------#
 #     FreeRTOS Library          #
 #-------------------------------#
@@ -10,11 +29,12 @@ add_library(
     INTERFACE
 )
 
-target_sources(
+target_include_directories(
     bsp_freertos
     INTERFACE
-    ${WAV_RTOS_TOP_LEVEL}/bsp/${CONFIG_TARGET_BOARD}/freertos/vector.S
-    ${WAV_RTOS_TOP_LEVEL}/bsp/${CONFIG_TARGET_BOARD}/freertos/printf.c
+    ${WAV_RTOS_TOP_LEVEL}/FreeRTOS-Kernel/include
+    ${WAV_RTOS_TOP_LEVEL}/FreeRTOS-Kernel/portable/GCC/RISC-V/
+    ${WAV_RTOS_TOP_LEVEL}/bsp/${CONFIG_TARGET_BOARD}/freertos
 )
 
 target_compile_options(
@@ -23,11 +43,17 @@ target_compile_options(
     -DWAV_MESSENGER_INTF_HOST=${CONFIG_WAV_MESSENGER_INTF_HOST}
 )
 
-macro(bsp_post_build target)
-    patch_image_header(${target} "${TOOLCHAIN_PREFIX}")
-    add_custom_command(TARGET ${target}
+macro(bsp_post_build TARGET)
+    get_property(WORKING_DIRECTORY TARGET ${TARGET} PROPERTY RUNTIME_OUTPUT_DIRECTORY)
+    patch_image_header(${TARGET} "${TOOLCHAIN_PREFIX}" ${WORKING_DIRECTORY})
+    add_custom_command(TARGET ${TARGET}
+        POST_BUILD
+        COMMAND ${CMAKE_OBJDUM%P} ${TARGET} --source --all-headers --demangle --line-numbers --wide > ${TARGET}.dump
+        WORKING_DIRECTORY ${WORKING_DIRECTORY}
+    )
+    add_custom_command(TARGET ${TARGET}
             POST_BUILD
-            COMMAND ${CMAKE_OBJCOPY} ${target} -O binary  ${target}.bin
-            WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+            COMMAND ${CMAKE_OBJCOPY} ${TARGET} -O binary  ${TARGET}.bin
+            WORKING_DIRECTORY ${WORKING_DIRECTORY}
     )
 endmacro()

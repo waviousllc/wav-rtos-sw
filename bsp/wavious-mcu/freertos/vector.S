@@ -176,3 +176,7 @@ IRQ_LC14:
         j freertos_risc_v_trap_handler
 IRQ_LC15:
         j freertos_risc_v_trap_handler
+
+.section .boot
+__jump_to_start:
+    j __start

@@ -137,14 +137,13 @@ struct __metal_driver_riscv_clint0 __metal_dt_clint_8000 = {
 };
 
 /* From cpu@0 */
-struct __metal_driver_cpu __metal_dt_cpu_0 = {
-    .cpu.vtable = &__metal_driver_vtable_cpu.cpu_vtable,
-    .hpm_count = 0,
+struct __metal_driver_cpu_min __metal_dt_cpu_0 = {
+    .cpu.vtable = &__metal_driver_vtable_cpu_min.cpu_vtable,
 };
 
 /* From interrupt_controller */
-struct __metal_driver_riscv_cpu_intc __metal_dt_cpu_0_interrupt_controller = {
-    .controller.vtable = &__metal_driver_vtable_riscv_cpu_intc.controller_vtable,
+struct __metal_driver_riscv_cpu_min_intc __metal_dt_cpu_0_interrupt_controller = {
+    .controller.vtable = &__metal_driver_vtable_riscv_cpu_min_intc.controller_vtable,
     .init_done = 0,
 };
 
