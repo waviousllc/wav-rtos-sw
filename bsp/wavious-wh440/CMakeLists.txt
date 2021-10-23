@@ -7,6 +7,11 @@
 # TODO: Configurable in the future
 set(CONFIG_TARGET_HAL riscv)
 
+# TODO: Set linker script based on hal / osal
+add_link_options(
+    -T ${CMAKE_CURRENT_LIST_DIR}/metal.freertos.lds
+)
+
 ################################################################################
 ##                         Board Library
 ##

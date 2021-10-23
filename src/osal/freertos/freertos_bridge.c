@@ -35,5 +35,6 @@ __attribute__((constructor)) static void FreeRTOS_init(void)
 
 void _putchar(char character)
 {
-    write(STDOUT_FILENO, &character, 1);
+    // Supress unused result warning
+    (void) !write(STDOUT_FILENO, &character, 1);
 }
