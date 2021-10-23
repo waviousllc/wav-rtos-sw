@@ -23,6 +23,8 @@
  * @details Stores all necessary information for communicating with a messenger
  *          hardware interface.
  *
+ *  @todo:  Might want to make this board specific in the future.
+ *
  * send_complete    used to coordinate message send tasks.
  * address          base address of messenger interface.
  * irq.req          RX request input irq number.
