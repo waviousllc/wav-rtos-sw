@@ -1,3 +1,5 @@
+set(CONFIG_TARGET_HAL riscv)
+
 # MCU Interrupt Configuration
 set(CONFIG_WAV_MCU_IRQ_SYNC_CFG 0x00000403)
 set(CONFIG_WAV_MCU_IRQ_EDGE_CFG 0x1FFFFBFC)
@@ -29,6 +31,46 @@ FILE(
     ${WAV_RTOS_TOP_LEVEL}/FreeRTOS-Kernel/portable/MemMang/heap_${RTOS_HEAP_ALLOC_SCHEME}.c
     ${WAV_RTOS_TOP_LEVEL}/bsp/${CONFIG_TARGET_BOARD}/freertos/Bridge_Freedom-metal_FreeRTOS.c
     ${WAV_RTOS_TOP_LEVEL}/bsp/${CONFIG_TARGET_BOARD}/freertos/vector.S
+)
+
+#-------------------------------#
+#         METAL Library         #
+#-------------------------------#
+# Create Metal Library
+FILE(
+    GLOB_RECURSE
+    GLOSS_SRC
+    ${WAV_RTOS_TOP_LEVEL}/freedom-metal/gloss/*.c
+    ${WAV_RTOS_TOP_LEVEL}/freedom-metal/gloss/*.S
+)
+
+set(
+    METAL_LIB_SRC
+    ${BSP_METAL_SOURCES}
+    ${GLOSS_SRC}
+)
+
+add_library(metal STATIC ${METAL_LIB_SRC})
+target_include_directories(
+    metal
+    PUBLIC
+    ${WAV_RTOS_TOP_LEVEL}/freedom-metal/
+    ${WAV_RTOS_TOP_LEVEL}/bsp/${CONFIG_TARGET_BOARD}/
+)
+
+target_compile_options(
+    metal
+    PRIVATE
+    -Wno-array-bounds
+)
+
+target_link_libraries(
+    metal
+    "-Wl,--start-group"
+    c
+    gcc
+    m
+    "-Wl,--end-group"
 )
 
 #-------------------------------#

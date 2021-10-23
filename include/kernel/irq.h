@@ -9,65 +9,20 @@
 /* Standard includes. */
 #include <stdint.h>
 
-/* Metal includes. */
-#include <metal/interrupt.h>
+/* Hardware Abstraction Layer include. */
+#include <hal/irq.h>
 
-/** @brief  Halt CPU until interrupt fires */
-__attribute__((always_inline))
-static inline void wait_for_interrupt(void)
-{
-    __asm__ volatile("wfi");
-}
+//  Map directly to HAL implementation
+#define wait_for_interrupt              hal_wait_for_interrupt
+#define disable_interrupt_local         hal_disable_interrupt_local
+#define enable_interrupt_local          hal_enable_interrupt_local
+#define interrupt_disable               hal_interrupt_disable
+#define interrupt_enable                hal_interrupt_enable
+#define interrupt_disable_save          hal_interrupt_disable_save
+#define interrupt_enable_save           hal_interrupt_enable_save
+#define interrupt_restore               hal_interrupt_restore
 
-/** @brief  Disables all interrupts */
-__attribute__((always_inline))
-static inline void disable_interrupt_local(void)
-{
-    __asm__ volatile("csrc mstatus, 0x8");
-}
-
-/** @brief  Enables all interrupts */
-__attribute__((always_inline))
-static inline void enable_interrupt_local(void)
-{
-    __asm__ volatile("csrs mstatus, 0x8");
-}
-
-/** @brief  Disable individual interrupts */
-__attribute__((always_inline))
-static inline void interrupt_disable(uint32_t mask)
-{
-    __asm__ volatile("csrc mie, %0" : : "r" (mask));
-}
-
-/** @brief  Enable individual interrupts */
-__attribute__((always_inline))
-static inline void interrupt_enable(uint32_t mask)
-{
-    __asm__ volatile("csrs mie, %0" : : "r" (mask));
-}
-
-/** @brief  Disable individual interrupts and return previous state */
-__attribute__((always_inline))
-static inline uint32_t interrupt_disable_save(uint32_t mask, uint32_t flags)
-{
-    __asm__ volatile ("csrrc %0, mie, %1" : "=r" (flags) : "r" (mask));
-    return flags;
-}
-
-/** @brief  Enable individual interrupts and return previous state */
-__attribute__((always_inline))
-static inline uint32_t interrupt_enable_save(uint32_t mask, uint32_t flags)
-{
-    __asm__ volatile ("csrrs %0, mie, %1" : "=r" (flags) : "r" (mask));
-    return flags;
-}
-/** @brief  Restore individual interrupts to previous state */
-__attribute__((always_inline))
-static inline void interrupt_restore(uint32_t flags)
-{
-    __asm__ volatile("csrw mie, %0" : : "r" (flags));
-}
+typedef hal_interrupt_handler_t irq_handler_t;
 
 /**
  * @brief   IRQ Registration Return Enumerations
@@ -101,7 +56,7 @@ typedef enum irq_return_t
  * @retval      IRQ_RETURN_INVALID_IRQ_NUM       IRQ is out of range.
  * @retval      IRQ_RETURN_ERROR                 otherwise.
  */
-irq_return_t request_irq(uint32_t irq, metal_interrupt_handler_t handler, void *args);
+irq_return_t request_irq(uint32_t irq, irq_handler_t handler, void *args);
 
 /**
  * @brief   Free IRQ

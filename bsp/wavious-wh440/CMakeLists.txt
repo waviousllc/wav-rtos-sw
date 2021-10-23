@@ -1,6 +1,4 @@
-# Set Messaging Interface to MCU Type
-# wavious-wh440 is type host, set host to 0x1
-set(CONFIG_WAV_MESSENGER_INTF_HOST 0x1)
+set(CONFIG_TARGET_HAL   riscv)
 
 FILE(
     GLOB_RECURSE
@@ -22,6 +20,46 @@ FILE(
 )
 
 #-------------------------------#
+#         METAL Library         #
+#-------------------------------#
+# Create Metal Library
+FILE(
+    GLOB_RECURSE
+    GLOSS_SRC
+    ${WAV_RTOS_TOP_LEVEL}/freedom-metal/gloss/*.c
+    ${WAV_RTOS_TOP_LEVEL}/freedom-metal/gloss/*.S
+)
+
+set(
+    METAL_LIB_SRC
+    ${BSP_METAL_SOURCES}
+    ${GLOSS_SRC}
+)
+
+add_library(metal STATIC ${METAL_LIB_SRC})
+target_include_directories(
+    metal
+    PUBLIC
+    ${WAV_RTOS_TOP_LEVEL}/freedom-metal/
+    ${WAV_RTOS_TOP_LEVEL}/bsp/${CONFIG_TARGET_BOARD}/
+)
+
+target_compile_options(
+    metal
+    PRIVATE
+    -Wno-array-bounds
+)
+
+target_link_libraries(
+    metal
+    "-Wl,--start-group"
+    c
+    gcc
+    m
+    "-Wl,--end-group"
+)
+
+#-------------------------------#
 #     FreeRTOS Library          #
 #-------------------------------#
 add_library(
@@ -35,12 +73,6 @@ target_include_directories(
     ${WAV_RTOS_TOP_LEVEL}/FreeRTOS-Kernel/include
     ${WAV_RTOS_TOP_LEVEL}/FreeRTOS-Kernel/portable/GCC/RISC-V/
     ${WAV_RTOS_TOP_LEVEL}/bsp/${CONFIG_TARGET_BOARD}/freertos
-)
-
-target_compile_options(
-    bsp_freertos
-    INTERFACE
-    -DWAV_MESSENGER_INTF_HOST=${CONFIG_WAV_MESSENGER_INTF_HOST}
 )
 
 macro(bsp_post_build TARGET)

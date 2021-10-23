@@ -35,46 +35,6 @@ endif()
 include(${WAV_RTOS_TOP_LEVEL}/bsp/${CONFIG_TARGET_BOARD}/CMakeLists.txt)
 
 #-------------------------------#
-#         METAL Library         #
-#-------------------------------#
-# Create Metal Library
-FILE(
-    GLOB_RECURSE
-    GLOSS_SRC
-    ${WAV_RTOS_TOP_LEVEL}/freedom-metal/gloss/*.c
-    ${WAV_RTOS_TOP_LEVEL}/freedom-metal/gloss/*.S
-)
-
-set(
-    METAL_LIB_SRC
-    ${BSP_METAL_SOURCES}
-    ${GLOSS_SRC}
-)
-
-add_library(metal STATIC ${METAL_LIB_SRC})
-target_include_directories(
-    metal
-    PUBLIC
-    ${WAV_RTOS_TOP_LEVEL}/freedom-metal/
-    ${WAV_RTOS_TOP_LEVEL}/bsp/${CONFIG_TARGET_BOARD}/
-)
-
-target_compile_options(
-    metal
-    PRIVATE
-    -Wno-array-bounds
-)
-
-target_link_libraries(
-    metal
-    "-Wl,--start-group"
-    c
-    gcc
-    m
-    "-Wl,--end-group"
-)
-
-#-------------------------------#
 #     FreeRTOS Library          #
 #-------------------------------#
 # Create FreeRTOS Library
@@ -92,7 +52,7 @@ target_compile_options(
 
 target_link_libraries(
     freertos
-    metal
+    hal
     bsp_freertos
 )
 
