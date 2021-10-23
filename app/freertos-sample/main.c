@@ -11,22 +11,15 @@
 /* Image header includes. */
 #include <image.h>
 
-/* Kernel includes. */
+/* FreeRTOS includes. */
 #include "FreeRTOS.h"
 #include "task.h"
 #include "queue.h"
+#include "timers.h"
 
-/* Freedom metal includes. */
-#include <metal/machine.h>
-#include <metal/machine/platform.h>
-
-#include <metal/lock.h>
-#include <metal/uart.h>
-#include <metal/interrupt.h>
-#include <metal/clock.h>
+#include <osal/printf.h>
 
 /*-----------------------------------------------------------*/
-extern uint32_t __start;
 img_hdr_t image_hdr __attribute__((section(".image_hdr"))) = {
     .image_magic = IMAGE_MAGIC,
     .image_hdr_version = IMAGE_VERSION_CURRENT,
@@ -34,7 +27,6 @@ img_hdr_t image_hdr __attribute__((section(".image_hdr"))) = {
     .version_major = 1,
     .version_minor = 0,
     .version_patch = 0,
-    .vector_addr = (uint32_t) &__start,
     .device_id = IMAGE_DEVICE_ID_HOST,
     .git_dirty = GIT_DIRTY,
     .git_ahead = GIT_AHEAD,
@@ -56,19 +48,31 @@ static uint32_t task2_DELAY_LOOP_COUNT = 200;
 
 static void vWriteTask1( void *pvParameters );
 static void vWriteTask2( void *pvParameters );
+static void vShutdown( TimerHandle_t xTimer);
 
 /*-----------------------------------------------------------*/
 int main( void )
 {
-    const char * const pcMessage = "FreeRTOS Demo start\r\n";
-    const char * const pcMessageEnd = "FreeRTOS Demo end\r\n";
-
+    static TimerHandle_t xTimer;
     prvSetupHardware();
-    write( STDOUT_FILENO, pcMessage, strlen( pcMessage ) );
+    configPRINTF(("FreeRTOS Demo Start\n"));
 
     /* At this point, you can create queue,semaphore, task requested for your application */
     xTaskCreate( vWriteTask1, "Task 1", configMINIMAL_STACK_SIZE, NULL, 2, NULL );
     xTaskCreate( vWriteTask2, "Task 2", configMINIMAL_STACK_SIZE, NULL, 2, NULL );
+
+    // Create shutdown timer
+    xTimer = xTimerCreate("Shtudown",
+                          pdMS_TO_TICKS(5),
+                          pdFALSE,
+                          NULL,
+                          vShutdown);
+
+    if (xTimerStart(xTimer, 0) == pdFAIL)
+    {
+        configPRINTF(("Failed to start timer\n"));
+        _exit(1);
+    }
 
     /* Start the tasks and timer running. */
     /* Here No task are defined, so if we start the Scheduler 2 tasks will running (Timer and Idle) */
@@ -81,16 +85,15 @@ int main( void )
     timer tasks to be created.
     or task have stoppped the Scheduler */
 
-    write( STDOUT_FILENO, pcMessageEnd, strlen( pcMessageEnd ) );
+    configPRINTF(("FreeRTOS Demo end"));
 }
 
 static void vWriteTask1( void *pvParameters )
 {
-    const char * const taskMessage = "Task 1 Running\r\n";
     volatile uint32_t ul;
     for( ;; )
     {
-        write (STDOUT_FILENO, taskMessage, strlen(taskMessage));
+        configPRINTF(("Task 1 Running\n"));
 
         for( ul = 0; ul < task1_DELAY_LOOP_COUNT; ul ++ );
     }
@@ -98,22 +101,27 @@ static void vWriteTask1( void *pvParameters )
 
 static void vWriteTask2( void *pvParameters )
 {
-    const char * const taskMessage = "Task 2 Running\r\n";
     volatile uint32_t ul;
     for( ;; )
     {
-        write (STDOUT_FILENO, taskMessage, strlen(taskMessage));
+
+        configPRINTF(("Task 2 Running\n"));
 
         for( ul = 0; ul < task2_DELAY_LOOP_COUNT; ul ++ );
     }
 }
 
+static void vShutdown( TimerHandle_t xTimer)
+{
+    (void) xTimer;
+    configPRINTF(("Shutdown\n"));
+    _exit(0);
+}
+
 /*-----------------------------------------------------------*/
 static void prvSetupHardware( void )
 {
-    const char * const pcMsg = "prvSetupHardware\n";
-    write( STDOUT_FILENO, pcMsg, strlen( pcMsg ) );
-    // TODO: Inits here
+    configPRINTF(("prvSetupHardware\n"));
 }
 /*-----------------------------------------------------------*/
 
@@ -131,6 +139,7 @@ void vApplicationMallocFailedHook( void )
     to query the size of free heap space that remains (although it does not
     provide information on how the remaining heap might be fragmented). */
     taskDISABLE_INTERRUPTS();
+    configPRINTF(("ERROR: Malloc failed.\n"));
     _exit(1);
 }
 /*-----------------------------------------------------------*/
@@ -158,9 +167,7 @@ void vApplicationStackOverflowHook( TaskHandle_t pxTask, char *pcTaskName )
     configCHECK_FOR_STACK_OVERFLOW is defined to 1 or 2.  This hook
     function is called if a stack overflow is detected. */
     taskDISABLE_INTERRUPTS();
-
-    write( STDOUT_FILENO, "ERROR Stack overflow on func: ", 30 );
-    write( STDOUT_FILENO, pcTaskName, strlen( pcTaskName ) );
+    configPRINTF(("ERROR: Stack overflow in task: %s.", pcTaskName));
     _exit(1);
 }
 /*-----------------------------------------------------------*/
@@ -173,9 +180,7 @@ void vApplicationTickHook( void )
 /*-----------------------------------------------------------*/
 void vAssertCalled( const char * const pcFileName, unsigned long ulLine )
 {
-    // Unused parameters
-    (void) pcFileName;
-    (void) ulLine;
+    configPRINTF(("ERROR: Aserrtion in %s on line %lu.\n", pcFileName, ulLine));
     taskDISABLE_INTERRUPTS();
     _exit(1);
 }

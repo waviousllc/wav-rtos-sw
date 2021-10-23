@@ -76,6 +76,7 @@
 #include <metal/memory.h>
 #include <metal/drivers/riscv_clint0.h>
 #include <metal/drivers/riscv_cpu.h>
+#include <metal/drivers/riscv_cpu_min.h>
 #include <metal/drivers/riscv_plic0.h>
 #include <metal/pmp.h>
 #include <metal/drivers/sifive_uart0.h>
@@ -89,9 +90,9 @@ extern struct metal_memory __metal_dt_mem_memory_60000000;
 extern struct __metal_driver_riscv_clint0 __metal_dt_clint_2000000;
 
 /* From cpu@0 */
-extern struct __metal_driver_cpu __metal_dt_cpu_0;
+extern struct __metal_driver_cpu_min __metal_dt_cpu_0;
 
-extern struct __metal_driver_riscv_cpu_intc __metal_dt_cpu_0_interrupt_controller;
+extern struct __metal_driver_riscv_cpu_min_intc __metal_dt_cpu_0_interrupt_controller;
 
 /* From interrupt_controller@c000000 */
 extern struct __metal_driver_riscv_plic0 __metal_dt_interrupt_controller_c000000;
@@ -479,7 +480,7 @@ struct metal_memory *__metal_memory_table[] = {
 #define __METAL_CPU_0_DCACHE_HANDLE 1
 
 __asm__ (".weak __metal_cpu_table");
-struct __metal_driver_cpu *__metal_cpu_table[] = {
+struct __metal_driver_cpu_min *__metal_cpu_table[] = {
                     &__metal_dt_cpu_0,  // Managment Core
                     NULL,               // App Core #1
                     NULL,               // App Core #2

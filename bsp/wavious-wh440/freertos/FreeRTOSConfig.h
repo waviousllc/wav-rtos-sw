@@ -65,6 +65,7 @@ your application. */
 #ifdef DEBUG
     void vAssertCalled( const char * const pcFileName, unsigned long ulLine );
     #define configASSERT(x) if( ( x ) == 0 ) vAssertCalled( __FILE__, __LINE__ )
+    #define configPRINTF( X )                printf_ X
 #endif /* DEBUG */
 
 /* Optional functions - most linkers will remove unused functions anyway. */
@@ -85,11 +86,6 @@ your application. */
 #define INCLUDE_xTaskAbortDelay                 0
 #define INCLUDE_xTaskGetHandle                  0
 #define INCLUDE_xTaskResumeFromISR              0
-
-/* Added by Wavious */
-#ifdef  DEBUG
-#define configPRINTF( X )                       printf_ X
-#endif /* DEBUG */
 
 /*******************************************************************************
 **                          UNUSED DEFINITIONS

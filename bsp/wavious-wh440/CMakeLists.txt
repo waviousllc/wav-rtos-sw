@@ -1,25 +1,47 @@
-FILE(
-    GLOB_RECURSE
-    BSP_METAL_SOURCES
-    ${WAV_RTOS_TOP_LEVEL}/freedom-metal/src/*.c
-    ${WAV_RTOS_TOP_LEVEL}/freedom-metal/src/*.S
+################################################################################
+##                      BSP Variables
+##
+##  Sets CMAKE flags / varaibles necessary for bulding code for this BSP.
+###############################################################################/
+
+# TODO: Configurable in the future
+set(CONFIG_TARGET_HAL riscv)
+
+################################################################################
+##                         Board Library
+##
+##  This library builds the Wavious-MCU board library. It should be linked
+##  against the HAL library.
+###############################################################################/
+add_library(
+    board
+    STATIC
+    ${CMAKE_CURRENT_LIST_DIR}/board/board.c
 )
 
+target_include_directories(
+    board
+    PUBLIC
+    ${CMAKE_CURRENT_LIST_DIR}
+)
+
+################################################################################
+##                      BSP FreeRTOS Sources
+##
+##  Defines all files that are required to build FreeRTOS for this board.
+###############################################################################/
 FILE(
     GLOB
     BSP_FREERTOS_SOURCES
-    ${WAV_RTOS_TOP_LEVEL}/FreeRTOS-Kernel/*.c
-    ${WAV_RTOS_TOP_LEVEL}/FreeRTOS-Kernel/portable/GCC/RISC-V/*.c
-    ${WAV_RTOS_TOP_LEVEL}/FreeRTOS-Kernel/portable/GCC/RISC-V/*.S
-    ${WAV_RTOS_TOP_LEVEL}/FreeRTOS-Kernel/portable/MemMang/heap_${RTOS_HEAP_ALLOC_SCHEME}.c
-    ${WAV_RTOS_TOP_LEVEL}/bsp/${CONFIG_TARGET_BOARD}/freertos/Bridge_Freedom-metal_FreeRTOS.c
-    ${WAV_RTOS_TOP_LEVEL}/bsp/${CONFIG_TARGET_BOARD}/freertos/printf.c
-    ${WAV_RTOS_TOP_LEVEL}/bsp/${CONFIG_TARGET_BOARD}/freertos/vector.S
+    ${CMAKE_CURRENT_LIST_DIR}/freertos/vector.S
 )
 
-#-------------------------------#
-#     FreeRTOS Library          #
-#-------------------------------#
+################################################################################
+##                      BSP FreeRTOS Library
+##
+##  This interface library defines all freertos related headers and compile
+##  options specific to this board. FreeRTOS itself is built elsewhere.
+###############################################################################/
 add_library(
     bsp_freertos
     INTERFACE
@@ -28,17 +50,21 @@ add_library(
 target_include_directories(
     bsp_freertos
     INTERFACE
-    ${WAV_RTOS_TOP_LEVEL}/FreeRTOS-Kernel/include
-    ${WAV_RTOS_TOP_LEVEL}/FreeRTOS-Kernel/portable/GCC/RISC-V/
-    ${WAV_RTOS_TOP_LEVEL}/bsp/${CONFIG_TARGET_BOARD}/freertos
+    ${CMAKE_CURRENT_LIST_DIR}/freertos/
 )
 
+################################################################################
+##                      BSP Post Build MACRO
+##
+##  Macro for how binaries should be exported / patched once built. This macro
+##  should be called for all targets that build an application for this board.
+###############################################################################/
 macro(bsp_post_build TARGET)
     get_property(WORKING_DIRECTORY TARGET ${TARGET} PROPERTY RUNTIME_OUTPUT_DIRECTORY)
     patch_image_header(${TARGET} "${TOOLCHAIN_PREFIX}" ${WORKING_DIRECTORY})
     add_custom_command(TARGET ${TARGET}
         POST_BUILD
-        COMMAND ${CMAKE_OBJDUM%P} ${TARGET} --source --all-headers --demangle --line-numbers --wide > ${TARGET}.dump
+        COMMAND ${CMAKE_OBJDUMP} ${TARGET} --source --all-headers --demangle --line-numbers --wide > ${TARGET}.dump
         WORKING_DIRECTORY ${WORKING_DIRECTORY}
     )
     add_custom_command(TARGET ${TARGET}

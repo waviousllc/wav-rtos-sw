@@ -65,6 +65,7 @@ your application. */
 #ifdef DEBUG
     void vAssertCalled( const char * const pcFileName, unsigned long ulLine );
     #define configASSERT(x) if( ( x ) == 0 ) vAssertCalled( __FILE__, __LINE__ )
+    #define configPRINTF( X )                       printf_ X
 #endif /* DEBUG */
 
 /* Optional functions - most linkers will remove unused functions anyway. */
