@@ -36,6 +36,15 @@ init_riscv32() {
   cd ..
 }
 
+init_posix() {
+  cd ${BUILD_DIR}
+  cmake .. -DCONFIG_SRC_ARCH="posix" \
+           -DCONFIG_TARGET_ARCH="posix" \
+           -DCONFIG_TARGET_BOARD=${CONFIG_TARGET_BOARD} \
+           -DCMAKE_BUILD_TYPE=${BUILD_TYPE}
+  cd ..
+}
+
 print_help() {
 echo "Usage: configure [OPTIONS]\n"
 echo "This program configures CMAKE for given architecture\n"
@@ -77,6 +86,10 @@ done
 eval set -- "$PARAMS"
 
 case "$CONFIG_TARGET_BOARD" in
+    posix)
+      init_build_common
+      init_posix
+      ;;
     wavious-mcu)
       init_build_common
       init_riscv32

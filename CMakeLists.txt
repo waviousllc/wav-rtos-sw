@@ -28,7 +28,6 @@ if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
         -Wno-unused-parameter
         -fdata-sections
         -ffunction-sections
-        -std=c11
     )
 endif()
 

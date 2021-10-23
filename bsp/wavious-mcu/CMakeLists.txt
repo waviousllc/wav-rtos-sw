@@ -8,6 +8,14 @@ set(CONFIG_WAV_MCU_IRQ_EDGE_CFG 0x1FFFFBFC)
 # wavious-mcu is type client, set host to 0x0
 set(CONFIG_WAV_MESSENGER_INTF_HOST 0x0)
 
+add_compile_options(
+    -std=c11
+)
+
+add_link_options(
+    -T ${WAV_RTOS_TOP_LEVEL}/bsp/${CONFIG_TARGET_BOARD}/metal.freertos.ld
+)
+
 FILE(
     GLOB_RECURSE
     BSP_METAL_SOURCES

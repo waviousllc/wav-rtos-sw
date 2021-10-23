@@ -1,5 +1,13 @@
 set(CONFIG_TARGET_HAL   riscv)
 
+add_compile_options(
+    -std=c11
+)
+
+add_link_options(
+    -T ${WAV_RTOS_TOP_LEVEL}/bsp/${CONFIG_TARGET_BOARD}/metal.freertos.ld
+)
+
 FILE(
     GLOB_RECURSE
     BSP_METAL_SOURCES

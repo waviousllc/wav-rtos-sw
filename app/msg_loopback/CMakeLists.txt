@@ -1,5 +1,5 @@
 set(CMAKE_TRY_COMPILE_TARGET_TYPE "STATIC_LIBRARY")
-project("freertos-sample" C ASM)
+project("msg_loopback" C ASM)
 
 # Directories
 set(APP_DIR         "${CMAKE_CURRENT_LIST_DIR}")
@@ -39,6 +39,7 @@ target_compile_definitions(
 
 target_link_libraries(${PROJECT_NAME}
     kernel
+    messenger_driver
 )
 
 target_link_options(

@@ -110,7 +110,7 @@ BaseType_t xMessengerTaskInit(UBaseType_t uxPriority,
                     "Messenger Task",
                     usStackDepth,
                     NULL,
-                    uxQueueLength,
+                    uxPriority,
                     &xMessengerTaskHandle) == pdFALSE)
     {
         return pdFALSE;
