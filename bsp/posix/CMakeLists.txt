@@ -5,11 +5,10 @@
 ###############################################################################/
 
 # TODO: Configurable in the future
-set(CONFIG_TARGET_HAL riscv)
+set(CONFIG_TARGET_HAL posix)
 
-# TODO: Set linker script based on hal / osal
-add_link_options(
-    -T ${CMAKE_CURRENT_LIST_DIR}/metal.freertos.lds
+add_compile_options(
+    -std=gnu99
 )
 
 ################################################################################
@@ -38,7 +37,6 @@ target_include_directories(
 FILE(
     GLOB
     BSP_FREERTOS_SOURCES
-    ${CMAKE_CURRENT_LIST_DIR}/freertos/vector.S
 )
 
 ################################################################################
@@ -55,7 +53,7 @@ add_library(
 target_include_directories(
     bsp_freertos
     INTERFACE
-    ${CMAKE_CURRENT_LIST_DIR}/freertos/
+    ${CMAKE_CURRENT_LIST_DIR}/freertos
 )
 
 ################################################################################
@@ -66,15 +64,9 @@ target_include_directories(
 ###############################################################################/
 macro(bsp_post_build TARGET)
     get_property(WORKING_DIRECTORY TARGET ${TARGET} PROPERTY RUNTIME_OUTPUT_DIRECTORY)
-    patch_image_header(${TARGET} "${TOOLCHAIN_PREFIX}" ${WORKING_DIRECTORY})
     add_custom_command(TARGET ${TARGET}
         POST_BUILD
         COMMAND ${CMAKE_OBJDUMP} ${TARGET} --source --all-headers --demangle --line-numbers --wide > ${TARGET}.dump
         WORKING_DIRECTORY ${WORKING_DIRECTORY}
-    )
-    add_custom_command(TARGET ${TARGET}
-            POST_BUILD
-            COMMAND ${CMAKE_OBJCOPY} ${TARGET} -O binary  ${TARGET}.bin
-            WORKING_DIRECTORY ${WORKING_DIRECTORY}
     )
 endmacro()

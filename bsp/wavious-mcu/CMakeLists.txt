@@ -15,6 +15,11 @@ if (NOT DEFINED ${CONFIG_WAV_MCU_IRQ_EDGE_CFG})
     set(CONFIG_WAV_MCU_IRQ_EDGE_CFG 0x00000000)
 endif()
 
+# TODO: Set linker script based on hal / osal
+add_link_options(
+    -T ${CMAKE_CURRENT_LIST_DIR}/metal.freertos.lds
+)
+
 ################################################################################
 ##                         Board Library
 ##
