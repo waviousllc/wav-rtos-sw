@@ -9,9 +9,10 @@
 /* Standard includes. */
 #include <stdint.h>
 
-typedef void (* __interrupt_handler_t)(int, void*);
+/* Alloy includes. */
+#include <alloy/interrupt.h>
 
-#define hal_interrupt_handler_t     __interrupt_handler_t
+#define hal_interrupt_handler_t     alloy_interrupt_handler_t
 
 /** @brief  Halt CPU until interrupt fires */
 __attribute__((always_inline))

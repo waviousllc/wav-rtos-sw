@@ -13,9 +13,31 @@ FILE(
     ${WAV_RTOS_TOP_LEVEL}/FreeRTOS-Kernel/portable/MemMang/heap_${RTOS_HEAP_ALLOC_SCHEME}.c
 )
 
-#-------------------------------#
-#     FreeRTOS Library          #
-#-------------------------------#
+################################################################################
+##                        ALLOY Library
+##
+##  This library builds the ALLOY code that is used to mimic some HW level
+##  services and provides a bare-metal framework that sits directly under
+##   the HAL.
+################################################################################
+add_library(
+    alloy
+    STATIC
+    ${WAV_RTOS_TOP_LEVEL}/bsp/${CONFIG_TARGET_BOARD}/alloy/interrupt.c
+)
+
+target_include_directories(
+    alloy
+    PUBLIC
+    ${WAV_RTOS_TOP_LEVEL}/bsp/${CONFIG_TARGET_BOARD}
+)
+
+################################################################################
+##                        BSP FreeRTOS Library Interface
+##
+##  This library provides a library interface that includes the required
+##   FreeRTOS implementations for this BSP.
+################################################################################
 add_library(
     bsp_freertos
     INTERFACE

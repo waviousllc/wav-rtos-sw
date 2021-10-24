@@ -9,6 +9,7 @@
 /* Standard includes. */
 #include <stdint.h>
 
+
 /** @brief  Returns data from specified register address */
 #if __riscv_xlen == 64
 __attribute__((always_inline))

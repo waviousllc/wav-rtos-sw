@@ -24,4 +24,7 @@ find_package (Threads REQUIRED)
 target_link_libraries(
     hal
     ${CMAKE_THREAD_LIBS_INIT}
+    -Wl,--whole-archive
+    alloy
+    -Wl,--no-whole-archive
 )
