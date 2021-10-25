@@ -75,7 +75,7 @@ extern __inline__ struct metal_buserror * __metal_driver_cpu_buserror(struct met
 
 
 /* --------------------- sifive_test0 ------------ */
-
+extern __inline__ unsigned long __metal_driver_wav_test0_base(const struct __metal_shutdown *sd);
 
 /* --------------------- sifive_trace ------------ */
 
@@ -149,6 +149,9 @@ struct __metal_driver_riscv_cpu_min_intc __metal_dt_cpu_0_interrupt_controller =
 
 struct metal_pmp __metal_dt_pmp;
 
+struct __metal_driver_wav_test0 __metal_dt_test_8000 = {
+    .shutdown.vtable = &__metal_driver_vtable_wav_test0.shutdown,
+};
 
 #endif /* METAL_INLINE_H*/
 #endif /* ! ASSEMBLY */

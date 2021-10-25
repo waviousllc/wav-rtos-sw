@@ -70,6 +70,7 @@
 #include <metal/memory.h>
 #include <metal/drivers/riscv_clint0.h>
 #include <metal/drivers/riscv_cpu_min.h>
+#include <metal/drivers/wav_test0.h>
 #include <metal/pmp.h>
 
 /* From refclk */
@@ -89,7 +90,8 @@ extern struct __metal_driver_riscv_cpu_min_intc __metal_dt_cpu_0_interrupt_contr
 
 extern struct metal_pmp __metal_dt_pmp;
 
-
+/* From test@8000 */
+extern struct __metal_driver_wav_test0 __metal_dt_test_8000;
 
 /* --------------------- fixed_clock ------------ */
 static __inline__ unsigned long __metal_driver_fixed_clock_rate(const struct metal_clock *clock)
@@ -256,8 +258,16 @@ static __inline__ struct metal_buserror * __metal_driver_cpu_buserror(struct met
 
 
 
-/* --------------------- sifive_test0 ------------ */
-
+/* --------------------- wav_test0 ------------ */
+static __inline__ unsigned long __metal_driver_wav_test0_base(const struct __metal_shutdown *sd)
+{
+	if ((uintptr_t)sd == (uintptr_t)&__metal_dt_test_8000) {
+		return METAL_WAV_TEST0_8000_BASE_ADDRESS;
+	}
+	else {
+		return 0;
+	}
+}
 
 /* --------------------- sifive_trace ------------ */
 
@@ -346,6 +356,8 @@ __asm__ (".weak __metal_spi_table");
 struct __metal_driver_sifive_spi0 *__metal_spi_table[] = {
                     NULL };
 #define __METAL_DT_MAX_UARTS 0
+
+#define __METAL_DT_SHUTDOWN_HANDLE (&__metal_dt_test_8000.shutdown)
 
 __asm__ (".weak __metal_uart_table");
 struct __metal_driver_sifive_uart0 *__metal_uart_table[] = {
