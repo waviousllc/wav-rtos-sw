@@ -12,6 +12,7 @@ FILE(
     GLOB_RECURSE
     BSP_METAL_SOURCES
     ${WAV_RTOS_TOP_LEVEL}/bsp/${CONFIG_TARGET_BOARD}/metal/riscv_cpu_min.c
+    ${WAV_RTOS_TOP_LEVEL}/bsp/${CONFIG_TARGET_BOARD}/metal/wav_test0.c
     ${WAV_RTOS_TOP_LEVEL}/freedom-metal/src/*.c
     ${WAV_RTOS_TOP_LEVEL}/freedom-metal/src/*.S
 )
