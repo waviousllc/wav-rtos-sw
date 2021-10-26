@@ -32,6 +32,7 @@
 
 /* Kernel includes. */
 #include <kernel/messenger.h>
+#include <board/board.h>
 
 /* Messenger includes. */
 #include <messenger/driver.h>
@@ -91,7 +92,7 @@ static void vMainTask( void *pvParameters )
 
     // Initialize messenger interface
     if(!xMessengerInterfaceRegisterPhyInterface((void *) &messenger,
-                                            0x00000001,
+                                            MEMORY_MAP_WAV_MCU_INTF,
                                             messenger_send_reg_if,
                                             messenger_receive_reg_if,
                                             validate_message))
@@ -99,7 +100,11 @@ static void vMainTask( void *pvParameters )
         shutdown(0x0001);
     }
 
-    messenger_init_reg_if(&messenger, 0x00000001, 0x0, 0x0);
+    messenger_init_reg_if(&messenger, MEMORY_MAP_WAV_MCU_INTF, 0x10, 0x11);
+
+    message.id = 0x0000000F;
+    message.data = 0xFFFFFFFF;
+    xSendMessage(messenger.address, &message);
 
     // Receiving loop
     for (;;)

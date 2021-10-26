@@ -7,6 +7,7 @@ add_compile_options(
 FILE(
     GLOB
     BSP_FREERTOS_SOURCES
+    ${CMAKE_CURRENT_LIST_DIR}/freertos/core.c
     ${WAV_RTOS_TOP_LEVEL}/FreeRTOS-Kernel/*.c
     ${WAV_RTOS_TOP_LEVEL}/FreeRTOS-Kernel/portable/ThirdParty/GCC/Posix/*.c
     ${WAV_RTOS_TOP_LEVEL}/FreeRTOS-Kernel/portable/ThirdParty/GCC/Posix/utils/*.c

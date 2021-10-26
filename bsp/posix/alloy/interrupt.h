@@ -9,6 +9,7 @@
 
 typedef void (*alloy_interrupt_handler_t)(int, void *);
 
+void alloy_interrupt_init(void);
 void alloy_interrupt_tick(void);
 
 int alloy_interrupt_register_handler(int irq,

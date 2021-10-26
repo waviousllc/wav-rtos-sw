@@ -1,7 +1,7 @@
 # Share the same driver as wavious-mcu but just has a different compile flag
 set(
     SRC
-    ${WAV_RTOS_TOP_LEVEL}/messenger/wavious-mcu/driver.c
+    ${WAV_RTOS_TOP_LEVEL}/src/drivers/messenger/wavious-mcu/driver.c
 )
 
 add_library(
