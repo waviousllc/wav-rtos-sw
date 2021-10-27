@@ -13,9 +13,9 @@ endif(NOT DEFINED RTOS_HEAP_ALLOC_SCHEME)
 
 # Kernel REQUIRED settings
 if(CONFIG_TARGET_ARCH MATCHES "riscv64")
-    add_compile_options(-march=rv64imac -mabi=lp64 -mcmodel=medany --specs=nano.specs -nostartfiles -nostdlib)
-    add_link_options(-Wl,-gc-sections -march=rv64imac -mabi=lp64 -mcmodel=medany --specs=nano.specs -nostartfiles -nostdlib)
+    add_compile_options(-march=rv64imac -mabi=lp64 -mcmodel=medany -nostartfiles -nostdlib)
+    add_link_options(-Wl,-gc-sections -march=rv64imac -mabi=lp64 -mcmodel=medany -nostartfiles -nostdlib)
 elseif(CONFIG_TARGET_ARCH MATCHES "riscv32")
-    add_compile_options(-march=rv32imc -mabi=ilp32 --specs=nano.specs -nostartfiles -nostdlib)
-    add_link_options(-Wl,--gc-sections -march=rv32imc -mabi=ilp32 --specs=nano.specs -nostartfiles -nostdlib)
+    add_compile_options(-march=rv32imc -mabi=ilp32 -nostartfiles -nostdlib)
+    add_link_options(-Wl,--gc-sections -march=rv32imc -mabi=ilp32 -nostartfiles -nostdlib)
 endif(CONFIG_TARGET_ARCH MATCHES "riscv64")
