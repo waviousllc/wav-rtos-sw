@@ -17,8 +17,8 @@
 
 /* Driver includes. */
 #include <messenger/driver.h>
-#include <messenger/wav_mcuintf_csr.h>
 #include <messenger/messages_general.h>
+#include <messenger/wav_mcuintf_csr.h>
 
 /*******************************************************************************
 **                                   MACROS

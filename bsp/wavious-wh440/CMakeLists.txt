@@ -1,7 +1,3 @@
-# Set Messaging Interface to MCU Type
-# wavious-wh440 is type host, set host to 0x1
-set(CONFIG_WAV_MESSENGER_INTF_HOST 0x1)
-
 FILE(
     GLOB_RECURSE
     BSP_METAL_SOURCES
@@ -35,12 +31,6 @@ target_include_directories(
     ${WAV_RTOS_TOP_LEVEL}/FreeRTOS-Kernel/include
     ${WAV_RTOS_TOP_LEVEL}/FreeRTOS-Kernel/portable/GCC/RISC-V/
     ${WAV_RTOS_TOP_LEVEL}/bsp/${CONFIG_TARGET_BOARD}/freertos
-)
-
-target_compile_options(
-    bsp_freertos
-    INTERFACE
-    -DWAV_MESSENGER_INTF_HOST=${CONFIG_WAV_MESSENGER_INTF_HOST}
 )
 
 macro(bsp_post_build TARGET)
