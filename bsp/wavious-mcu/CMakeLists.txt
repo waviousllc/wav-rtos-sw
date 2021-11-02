@@ -6,10 +6,6 @@ if (NOT DEFINED ${CONFIG_WAV_MCU_IRQ_EDGE_CFG})
     set(CONFIG_WAV_MCU_IRQ_EDGE_CFG 0x00000000)
 endif()
 
-# Set Messaging Interface to MCU Type
-# wavious-mcu is type client, set host to 0x0
-set(CONFIG_WAV_MESSENGER_INTF_HOST 0x0)
-
 FILE(
     GLOB_RECURSE
     BSP_METAL_SOURCES
@@ -57,7 +53,6 @@ target_compile_options(
     INTERFACE
     -DWAV_MCU_IRQ_SYNC_CFG=${CONFIG_WAV_MCU_IRQ_SYNC_CFG}
     -DWAV_MCU_IRQ_EDGE_CFG=${CONFIG_WAV_MCU_IRQ_EDGE_CFG}
-    -DWAV_MESSENGER_INTF_HOST=${CONFIG_WAV_MESSENGER_INTF_HOST}
 )
 
 macro(bsp_post_build TARGET)
