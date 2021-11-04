@@ -14,6 +14,7 @@ FILE(
     BSP_METAL_SOURCES
     ${CMAKE_CURRENT_LIST_DIR}/metal/drivers/riscv_cpu_min.c
     ${CMAKE_CURRENT_LIST_DIR}/metal/drivers/wav_test0.c
+    ${CMAKE_CURRENT_LIST_DIR}/metal/drivers/wmcu_uart0.c
     ${WAV_RTOS_TOP_LEVEL}/freedom-metal/src/*.c
     ${WAV_RTOS_TOP_LEVEL}/freedom-metal/src/*.S
 )
