@@ -1,6 +1,10 @@
 # MCU Interrupt Configuration
-set(CONFIG_WAV_MCU_IRQ_SYNC_CFG 0x00000403)
-set(CONFIG_WAV_MCU_IRQ_EDGE_CFG 0x1FFFFBFC)
+if (NOT DEFINED ${CONFIG_WAV_MCU_IRQ_SYNC_CFG})
+    set(CONFIG_WAV_MCU_IRQ_SYNC_CFG 0x00000000)
+endif()
+if (NOT DEFINED ${CONFIG_WAV_MCU_IRQ_EDGE_CFG})
+    set(CONFIG_WAV_MCU_IRQ_EDGE_CFG 0x00000000)
+endif()
 
 # Set Messaging Interface to MCU Type
 # wavious-mcu is type client, set host to 0x0
