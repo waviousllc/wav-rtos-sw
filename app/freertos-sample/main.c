@@ -20,6 +20,9 @@
 #include <osal/printf.h>
 
 /*-----------------------------------------------------------*/
+/* Don't include image header for POSIX based builds */
+#ifndef _POSIX_VERSION
+extern uintptr_t __start;
 img_hdr_t image_hdr __attribute__((section(".image_hdr"))) = {
     .image_magic = IMAGE_MAGIC,
     .image_hdr_version = IMAGE_VERSION_CURRENT,
@@ -27,6 +30,8 @@ img_hdr_t image_hdr __attribute__((section(".image_hdr"))) = {
     .version_major = 1,
     .version_minor = 0,
     .version_patch = 0,
+    .vector_size = VECTOR_SIZE,
+    .vector_addr = (uintptr_t) &__start,
     .device_id = IMAGE_DEVICE_ID_HOST,
     .git_dirty = GIT_DIRTY,
     .git_ahead = GIT_AHEAD,
@@ -35,6 +40,7 @@ img_hdr_t image_hdr __attribute__((section(".image_hdr"))) = {
     .crc = 0,
     .data_size = 0,
 };
+#endif /* !_POSIX_VERSION */
 
 /*-----------------------------------------------------------*/
 /*
