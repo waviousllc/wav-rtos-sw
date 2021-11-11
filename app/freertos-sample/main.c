@@ -63,7 +63,7 @@ int main( void )
 
     // Create shutdown timer
     xTimer = xTimerCreate("Shtudown",
-                          pdMS_TO_TICKS(5),
+                          pdMS_TO_TICKS(2),
                           pdFALSE,
                           NULL,
                           vShutdown);
@@ -180,6 +180,19 @@ void vApplicationTickHook( void )
 /*-----------------------------------------------------------*/
 void vAssertCalled( const char * const pcFileName, unsigned long ulLine )
 {
+    const char *pcString = pcFileName;
+    uint32_t ulFileNameLen = strlen(pcFileName);
+    char cFileName[7] = {'\0'};
+
+    // Extract filename
+    memcpy(&cFileName[0], &pcString[ulFileNameLen - 6], 6);
+
+    // Ignore assertions from port.c
+    if (!strcmp(&cFileName[0], "port.c"))
+    {
+        return;
+    }
+
     configPRINTF(("ERROR: Aserrtion in %s on line %lu.\n", pcFileName, ulLine));
     taskDISABLE_INTERRUPTS();
     _exit(1);
