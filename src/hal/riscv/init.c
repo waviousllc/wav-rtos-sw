@@ -24,19 +24,6 @@ static uint64_t _prv_timer_rate   = 0UL;
 static uint64_t ullNextTime       = 0ULL;
 static volatile uint64_t *pullMachineTimerCompareRegister;
 
-/**
- * Override weak declarations as not needed for our application.
- */
-void metal_init_run(void)
-{
-    // Intentionally empty
-}
-
-void metal_fini_run(void)
-{
-    // Intentionally empty
-}
-
 void hal_timer_init(uint64_t timer_rate)
 {
     uint32_t ulCurrentTimeHigh, ulCurrentTimeLow;

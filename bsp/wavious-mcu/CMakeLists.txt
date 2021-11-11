@@ -85,7 +85,7 @@ macro(bsp_post_build TARGET)
     )
     add_custom_command(TARGET ${TARGET}
         POST_BUILD
-        COMMAND ${CMAKE_OBJCOPY} ${TARGET} -O binary ${TARGET}_itcm.bin -j .text -j .init
+        COMMAND ${CMAKE_OBJCOPY} ${TARGET} -O binary ${TARGET}_itcm.bin -j .text -j .init -j .ctors
         COMMAND ${CMAKE_OBJCOPY} ${TARGET} -O binary ${TARGET}_dtcm.bin -j .preinit_array -j .init_array -j .fini_array -j .rodata -j .data -j .tdata -j .tbss -j .bss
         WORKING_DIRECTORY ${WORKING_DIRECTORY}
     )
