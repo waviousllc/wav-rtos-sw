@@ -3,6 +3,8 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
+#include <stdint.h>
+
 #include "memory_map.h"
 
 #ifndef WAV_MCU_IRQ_SYNC_CFG
