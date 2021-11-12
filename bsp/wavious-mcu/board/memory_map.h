@@ -6,8 +6,6 @@
 #ifndef _BOARD_MEMORY_MAP_H_
 #define _BOARD_MEMORY_MAP_H_
 
-#include <stdint.h>
-
 #include "wav_mcu_csr.h"
 
 // Common MCU registers (same for all Wavious MCUs)
