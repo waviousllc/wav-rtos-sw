@@ -123,6 +123,6 @@ extern void vAssertCalled( const char * const pcFileName,
 
 #define configASSERT( x )    if( ( x ) == 0 ) vAssertCalled( __FILE__, __LINE__ )
 #define configUSE_MALLOC_FAILED_HOOK    1
-#define configPRINTF( X )                       printf X
+#define configPRINTF( X )                       printf_ X
 
 #endif /* FREERTOS_CONFIG_H */
