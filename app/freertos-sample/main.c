@@ -17,7 +17,7 @@
 #include "queue.h"
 #include "timers.h"
 
-#include <osal/printf.h>
+#include <kernel/printf.h>
 
 /*-----------------------------------------------------------*/
 /* Don't include image header for POSIX based builds */
