@@ -42,12 +42,13 @@ init_riscv32() {
 }
 
 init_posix() {
-  cd ${BUILD_DIR}
-  cmake .. -DCONFIG_SRC_ARCH="posix" \
-           -DCONFIG_TARGET_ARCH="posix" \
-           -DCONFIG_TARGET_BOARD=${CONFIG_TARGET_BOARD} \
-           -DCMAKE_BUILD_TYPE=${BUILD_TYPE}
-  cd ..
+  cmake -S ${SOURCE_DIR} \
+        -B ${BUILD_DIR}  \
+        -DCONFIG_SRC_ARCH="posix" \
+        -DCONFIG_TARGET_ARCH="posix" \
+        -DCONFIG_TARGET_BOARD=${CONFIG_TARGET_BOARD} \
+        -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
+        ${PARAMS[@]}
 }
 
 print_help() {
