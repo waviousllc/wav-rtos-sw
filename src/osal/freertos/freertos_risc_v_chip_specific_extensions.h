@@ -57,7 +57,7 @@
 #define portasmHAS_MTIME 0
 #define portasmADDITIONAL_CONTEXT_SIZE 0 /* Must be even number on 32-bit cores. */
 
-#define portasmHANDLE_INTERRUPT     FreedomMetal_InterruptHandler
+#define portasmHANDLE_INTERRUPT     hal_handle_interrupt
 
 .macro portasmSAVE_ADDITIONAL_REGISTERS
         /* No additional registers to save, so this macro does nothing. */

@@ -28,7 +28,7 @@ your application. */
 #define configUSE_COUNTING_SEMAPHORES           1
 #define configQUEUE_REGISTRY_SIZE               8
 #define configUSE_TIME_SLICING                  0
-#define configUSE_NEWLIB_REENTRANT              1
+#define configUSE_NEWLIB_REENTRANT              0
 #define configUSE_APPLICATION_TASK_TAG          0
 
 #define configSTACK_DEPTH_TYPE                  uint16_t
@@ -57,7 +57,7 @@ your application. */
 
 /* Software timer related definitions. */
 #define configUSE_TIMERS                        1
-#define configTIMER_TASK_PRIORITY               1
+#define configTIMER_TASK_PRIORITY               (configMAX_PRIORITIES - 1)
 #define configTIMER_QUEUE_LENGTH                8
 #define configTIMER_TASK_STACK_DEPTH            configMINIMAL_STACK_SIZE
 
@@ -65,6 +65,7 @@ your application. */
 #ifdef DEBUG
     void vAssertCalled( const char * const pcFileName, unsigned long ulLine );
     #define configASSERT(x) if( ( x ) == 0 ) vAssertCalled( __FILE__, __LINE__ )
+    #define configPRINTF( X )                printf_ X
 #endif /* DEBUG */
 
 /* Optional functions - most linkers will remove unused functions anyway. */
@@ -85,11 +86,6 @@ your application. */
 #define INCLUDE_xTaskAbortDelay                 0
 #define INCLUDE_xTaskGetHandle                  0
 #define INCLUDE_xTaskResumeFromISR              0
-
-/* Added by Wavious */
-#ifdef  DEBUG
-#define configPRINTF( X )                       printf_ X
-#endif /* DEBUG */
 
 /*******************************************************************************
 **                          UNUSED DEFINITIONS

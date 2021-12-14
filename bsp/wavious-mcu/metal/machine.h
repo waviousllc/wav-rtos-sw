@@ -70,6 +70,8 @@
 #include <metal/memory.h>
 #include <metal/drivers/riscv_clint0.h>
 #include <metal/drivers/riscv_cpu_min.h>
+#include <metal/drivers/wav_test0.h>
+#include <metal/drivers/wmcu_uart0.h>
 #include <metal/pmp.h>
 
 /* From refclk */
@@ -89,7 +91,10 @@ extern struct __metal_driver_riscv_cpu_min_intc __metal_dt_cpu_0_interrupt_contr
 
 extern struct metal_pmp __metal_dt_pmp;
 
+/* From test@8000 */
+extern struct __metal_driver_wav_test0 __metal_dt_test_8000;
 
+extern struct __metal_driver_wmcu_uart0 __metal_dt_serial_8000;
 
 /* --------------------- fixed_clock ------------ */
 static __inline__ unsigned long __metal_driver_fixed_clock_rate(const struct metal_clock *clock)
@@ -256,13 +261,39 @@ static __inline__ struct metal_buserror * __metal_driver_cpu_buserror(struct met
 
 
 
-/* --------------------- sifive_test0 ------------ */
-
+/* --------------------- wav_test0 ------------ */
+static __inline__ unsigned long __metal_driver_wav_test0_base(const struct __metal_shutdown *sd)
+{
+	if ((uintptr_t)sd == (uintptr_t)&__metal_dt_test_8000) {
+		return METAL_WAV_TEST0_8000_BASE_ADDRESS;
+	}
+	else {
+		return 0;
+	}
+}
 
 /* --------------------- sifive_trace ------------ */
 
-/* --------------------- sifive_uart0 ------------ */
+/* --------------------- wmcu_uart0 ------------ */
+static __inline__ unsigned long __metal_driver_wmcu_uart0_control_base(struct metal_uart *uart)
+{
+    if ((uintptr_t)uart == (uintptr_t)&__metal_dt_serial_8000) {
+        return METAL_WMCU_UART0_8000_BASE_ADDRESS;
+    }
+    else {
+        return 0;
+    }
+}
 
+static __inline__ unsigned long __metal_driver_wmcu_uart0_control_size(struct metal_uart *uart)
+{
+    if ((uintptr_t)uart == (uintptr_t)&__metal_dt_serial_8000) {
+        return METAL_WMCU_UART0_8000_SIZE;
+    }
+    else {
+        return 0;
+    }
+}
 
 /* --------------------- sifive_simuart0 ------------ */
 
@@ -291,6 +322,8 @@ __asm__ (".weak __metal_memory_table");
 struct metal_memory *__metal_memory_table[] = {
                     &__metal_dt_mem_dtim_50000,
                     &__metal_dt_mem_itim_10000};
+
+#define __METAL_DT_STDOUT_UART_HANDLE (&__metal_dt_serial_8000.uart)
 
 /* From clint@8000 */
 #define __METAL_DT_RISCV_CLINT0_HANDLE (&__metal_dt_clint_8000.controller)
@@ -347,9 +380,11 @@ struct __metal_driver_sifive_spi0 *__metal_spi_table[] = {
                     NULL };
 #define __METAL_DT_MAX_UARTS 0
 
+#define __METAL_DT_SHUTDOWN_HANDLE (&__metal_dt_test_8000.shutdown)
+
 __asm__ (".weak __metal_uart_table");
-struct __metal_driver_sifive_uart0 *__metal_uart_table[] = {
-                    NULL };
+struct __metal_driver_wmcu_uart0 *__metal_uart_table[] = {
+                    &__metal_dt_serial_8000};
 #define __METAL_DT_MAX_SIMUARTS 0
 
 __asm__ (".weak __metal_simuart_table");

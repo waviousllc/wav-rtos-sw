@@ -3,8 +3,10 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-#ifndef _MEMORY_MAP_H_
-#define _MEMORY_MAP_H_
+#ifndef _BOARD_MEMORY_MAP_H_
+#define _BOARD_MEMORY_MAP_H_
+
+#include "wav_mcu_csr.h"
 
 // Common MCU registers (same for all Wavious MCUs)
 #define MEMORY_MAP_WAV_MCU_INTF         (0x00004000)
@@ -12,4 +14,11 @@
 #define MEMORY_MAP_WAV_MCU_ITCM         (0x00010000)
 #define MEMORY_MAP_WAV_MCU_DTCM         (0x00050000)
 
-#endif /* _MEMORY_MAP_H_ */
+#define MTIME_BASE_ADDRESS_LO           ( ( MEMORY_MAP_WAV_MCU ) + ( WAV_MCU_MTIME_LO_STA__ADR ) )
+#define MTIME_BASE_ADDRESS_HI           ( ( MEMORY_MAP_WAV_MCU ) + ( WAV_MCU_MTIME_HI_STA__ADR ) )
+#define MTIME_CMP_ADDRESS(hart_id)      ( ( MEMORY_MAP_WAV_MCU ) + ( WAV_MCU_MTIMECMP_LO_CFG__ADR ) )
+
+#define MTIME_RLD_REG                   ( (uint32_t) (( MEMORY_MAP_WAV_MCU ) + ( WAV_MCU_MTIMECMP_CFG__ADR )) )
+#define MTIME_RELOAD()                  ( (*((uint32_t *)(MTIME_RLD_REG)) = 0x1) )
+
+#endif /* _BOARD_MEMORY_MAP_H_ */

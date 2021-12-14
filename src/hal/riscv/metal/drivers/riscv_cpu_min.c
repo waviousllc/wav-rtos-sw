@@ -6,6 +6,30 @@
 #include <metal/machine.h>
 #include <metal/drivers/riscv_cpu_min.h>
 
+metal_vector_mode __metal_controller_interrupt_vector_mode(void)
+{
+    uintptr_t val;
+
+    __asm__ volatile("csrr %0, mtvec" : "=r"(val));
+    val &= METAL_MTVEC_MASK;
+
+    switch (val) {
+    case METAL_MTVEC_CLIC:
+        return METAL_SELECTIVE_VECTOR_MODE;
+    case METAL_MTVEC_CLIC_VECTORED:
+        return METAL_HARDWARE_VECTOR_MODE;
+    case METAL_MTVEC_VECTORED:
+        return METAL_VECTOR_MODE;
+    }
+    return METAL_DIRECT_MODE;
+}
+
+uintptr_t __metal_myhart_id(void) {
+    uintptr_t myhart;
+    __asm__ volatile("csrr %0, mhartid" : "=r"(myhart));
+    return myhart;
+}
+
 /*******************************************************************************
 **                   INTERRUPT CONTROLLER VTABLE
 *******************************************************************************/

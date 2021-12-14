@@ -2,7 +2,6 @@ set(CMAKE_TRY_COMPILE_TARGET_TYPE "STATIC_LIBRARY")
 project("freertos-sample" C ASM)
 
 # Directories
-set(LINKER_SCRIPT   "${WAV_RTOS_TOP_LEVEL}/bsp/${CONFIG_TARGET_BOARD}/metal.freertos.lds")
 set(APP_DIR         "${CMAKE_CURRENT_LIST_DIR}")
 
 # Source Files
@@ -38,7 +37,6 @@ target_link_libraries(${PROJECT_NAME}
 target_link_options(
     ${PROJECT_NAME}
     PUBLIC
-    -T ${LINKER_SCRIPT}
     -Wl,--defsym,__stack_size=0x200
     -Wl,--defsym,__heap_size=0x0
     -Wl,--build-id

@@ -1,14 +1,17 @@
-#! /bin/sh
+#! /bin/bash
 # Configures build environment for appropriate target architecture
 
 # Definitions
-RISCV_TOOLCHAIN="toolchain/riscv.toolchain"
+SOURCE_DIR=$(dirname $0)
+WAV_RTOS_DIR=${WAV_RTOS_DIR:-${SOURCE_DIR}}
+TOOLCHAIN_DIR="${WAV_RTOS_DIR}/toolchain"
+RISCV_TOOLCHAIN="${TOOLCHAIN_DIR}/riscv.toolchain"
 BUILD_DIR="build"
 
 # Variables
 CONFIG_TARGET_CPU=""
 CONFIG_TARGET_ARCH=""
-CONFIG_TARGET_BOARD=""
+CONFIG_TARGET_BOARD=${CONFIG_TARGET_BOARD:-""}
 BUILD_TYPE=""
 
 # Common build prep function
@@ -17,30 +20,42 @@ init_build_common() {
 }
 
 init_riscv64() {
-  cd ${BUILD_DIR}
-  cmake .. -DCMAKE_TOOLCHAIN_FILE=../${RISCV_TOOLCHAIN} \
-           -DCONFIG_SRC_ARCH="riscv" \
-           -DCONFIG_TARGET_ARCH="riscv64" \
-           -DCONFIG_TARGET_BOARD=${CONFIG_TARGET_BOARD} \
-           -DCMAKE_BUILD_TYPE=${BUILD_TYPE}
-  cd ..
+  cmake -S ${SOURCE_DIR}  \
+        -B ${BUILD_DIR} \
+        -DCMAKE_TOOLCHAIN_FILE=../${RISCV_TOOLCHAIN} \
+        -DCONFIG_SRC_ARCH="riscv" \
+        -DCONFIG_TARGET_ARCH="riscv64" \
+        -DCONFIG_TARGET_BOARD=${CONFIG_TARGET_BOARD} \
+        -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
+        ${PARAMS[@]}
 }
 
 init_riscv32() {
-  cd ${BUILD_DIR}
-  cmake .. -DCMAKE_TOOLCHAIN_FILE=../${RISCV_TOOLCHAIN} \
-           -DCONFIG_SRC_ARCH="riscv" \
-           -DCONFIG_TARGET_ARCH="riscv32" \
-           -DCONFIG_TARGET_BOARD=${CONFIG_TARGET_BOARD} \
-           -DCMAKE_BUILD_TYPE=${BUILD_TYPE}
-  cd ..
+  cmake -S ${SOURCE_DIR} \
+        -B ${BUILD_DIR} \
+        -DCMAKE_TOOLCHAIN_FILE=../${RISCV_TOOLCHAIN} \
+        -DCONFIG_SRC_ARCH="riscv" \
+        -DCONFIG_TARGET_ARCH="riscv32" \
+        -DCONFIG_TARGET_BOARD=${CONFIG_TARGET_BOARD} \
+        -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
+        ${PARAMS[@]}
+}
+
+init_posix() {
+  cmake -S ${SOURCE_DIR} \
+        -B ${BUILD_DIR}  \
+        -DCONFIG_SRC_ARCH="posix" \
+        -DCONFIG_TARGET_ARCH="posix" \
+        -DCONFIG_TARGET_BOARD=${CONFIG_TARGET_BOARD} \
+        -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
+        ${PARAMS[@]}
 }
 
 print_help() {
 echo "Usage: configure [OPTIONS]\n"
 echo "This program configures CMAKE for given architecture\n"
 echo "Options:"
-echo "--board <wavious-mcu | wavious-wh440>"
+echo "--board <wavious-mcu | wavious-wh440 | posix>"
 echo "-t, --build_type <Debug | Release>"
 }
 
@@ -63,10 +78,6 @@ while [ $# -gt 0 ]; do
       shift
       break
       ;;
-    -*|--*=) # unsupported flags
-      echo "Error: Unsupported flag $1" >&2
-      exit 1
-      ;;
     *) # preserve positional arguments
       PARAMS="$PARAMS $1"
       shift
@@ -77,6 +88,10 @@ done
 eval set -- "$PARAMS"
 
 case "$CONFIG_TARGET_BOARD" in
+    posix)
+      init_build_common
+      init_posix
+      ;;
     wavious-mcu)
       init_build_common
       init_riscv32
@@ -84,5 +99,9 @@ case "$CONFIG_TARGET_BOARD" in
     wavious-wh440)
       init_build_common
       init_riscv64
+      ;;
+    *)
+      echo "Bad board specified. Exiting..."
+      exit
       ;;
 esac

@@ -3,13 +3,52 @@
 Wavious RTOS Base Software project. This project contains all code
 that runs on the various wavious cores utilizing FreeRTOS
 
-## Building with CMAKE
+## pre-commit
+This project uses pre-commit to ensure that all source files are properly
+formatted. To install pre-commit, ensure that you have a version of python
+installed as well as pip. With pip installed run:
+`pip install pre-commit`
+
+Once pre-commit is installed via python3, then pre-commit needs to be installed
+for this project. Run the following to install pre-commit:
+`pre-commit install -c wav-build/.pre-commit-config.yaml`
+
+pre-commit will be executed any time `git commit` command is executed.
+
+Refer to [pre-commit](https://pre-commit.com/) for more details.
+
+## Build Configuration
 When the project is first clone, the project needs to be configured using the
 following command:
 ~~~
 ./configure --board <bsp-board>
 ~~~
 where bsp-board is the targeted supported wavious core.
+
+Since Wavious RTOS Base Software project is meant to be used as a submodule
+for other Wavious projects, the configure script has been designed such that
+it can be sourced and expanded for other projects. Arguments specific to
+wav-rtos-sw configuration script are passed when invoking the parent's configure
+script. Additionally, "extra" cmake arguments can be passed directly to this
+projects configure script so that the cmake project is fully configured.
+
+An example from Wavious LPDDR SW project:
+~~~
+  # Invoke RTOS configure script with addtional parameters
+  args=(
+      -DCONFIG_TARGET_PHY=${CONFIG_TARGET_PHY}
+      -DCONFIG_CALIBRATE_PLL=${CONFIG_CAL_PLL}
+      -DCONFIG_CALIBRATE_ZQCAL=${CONFIG_CAL_ZQCAL}
+      -DCONFIG_CALIBRATE_SA=${CONFIG_CAL_SA}
+      -DCONFIG_DRAM_TRAIN=${CONFIG_DRAM_TRAIN}
+      -DCONFIG_CAL_PERIODIC=${CONFIG_CAL_PERIODIC}
+  )
+  source ${WAV_RTOS_DIR}/configure ${PARAMS} ${args[@]}
+
+  To invoke: ./configure --board wavious-mcu
+
+  board argument is passed to wav-rtos-sw configure script via ${PARAMS} argument
+~~~
 
 ## Building with CMAKE ##
 Once the environment is configured, software can be

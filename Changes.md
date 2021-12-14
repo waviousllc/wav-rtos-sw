@@ -1,3 +1,18 @@
+# VERSION 1.3.0 Release
+
+## New Features
+- Standard shutdown interface for all boards
+- Added UART interface for WMCU board
+- printf support for all boards
+- FreeRTOS-Kernel V10.4.4
+- Configure Script Chaining
+- Hardware Abstraction Layer
+- Operating System Abstraction Layer
+- POSIX board support
+
+## Fixes
+- None
+
 # VERSION 1.2.0 Release
 
 ## New Features

@@ -11,7 +11,8 @@ OUTPUT_ARCH("riscv")
  * applications.
  */
 
-ENTRY(_enter)
+EXTERN(__metal_vector_table)
+ENTRY(__jump_to_start)
 
 MEMORY
 {
