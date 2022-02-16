@@ -1,0 +1,4 @@
+void osal_assert()
+{
+
+}
